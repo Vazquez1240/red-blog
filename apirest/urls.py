@@ -9,6 +9,8 @@ app_name = 'apirest'
 urlpatterns = [
     path('users/', include('users.urls')),
 
+    path('post/', include('post.urls')),
+
     path('', include(drf_router.urls)),
 ]
 
