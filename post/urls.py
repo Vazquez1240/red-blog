@@ -5,4 +5,4 @@ from post.viewsets import PostViewSet
 urlpatterns = [
 ]
 
-drf_router.register(r'posts', PostViewSet, basename='users')
+drf_router.register(r'posts', PostViewSet, basename='posts')
