@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, DateTimeField, UUIDField, ReferenceField
+from mongoengine import Document, StringField, DateTimeField, UUIDField, ReferenceField, IntField
 from datetime import datetime
 
 class Post(Document):
@@ -8,6 +8,10 @@ class Post(Document):
 
     author_username = StringField(max_length=150)
     author_email = StringField()
+
+    likes = IntField(default=0)
+    comments = StringField(max_length=450, default="")
+
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
 
