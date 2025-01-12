@@ -11,6 +11,8 @@ urlpatterns = [
 
     path('post/', include('post.urls')),
 
+    path('profiles', include('profiles.urls')),
+
     path('', include(drf_router.urls)),
 ]
 

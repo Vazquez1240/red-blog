@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import dj_database_url
-from mongoengine import connect
+import mongoengine
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,7 +47,8 @@ INSTALLED_APPS = [
 
     'apirest',
     'users',
-    'base'
+    'base',
+    'profiles',
 ]
 
 MIDDLEWARE = [
@@ -93,7 +94,7 @@ MONGODB_DATABASES = {
     },
 }
 
-connect(
+mongoengine.connect(
     db=MONGODB_DATABASES['default']['name'],
     host=MONGODB_DATABASES['default']['host'],
     port=MONGODB_DATABASES['default']['port'],

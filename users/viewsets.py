@@ -1,10 +1,18 @@
 from .models import User
-from .serializers import UserSerializer
-from rest_framework.parsers import JSONParser
-from rest_framework import viewsets
+from .serializers import UserSerializer, CustomTokenObtainPairSerializer
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken, TokenBackendError
+from rest_framework import viewsets, status
 from .permissions import IsAuthenticatedAndObjUserOrIsStaff
 from rest_framework import exceptions
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
+import jwt
+from social_blog import settings
 
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
     parser_classes = [JSONParser]
@@ -23,3 +31,50 @@ class UserViewSet(viewsets.ModelViewSet):
             return User.objects.filter(pk=self.request.user.pk)
         else:
             raise exceptions.PermissionDenied('Forbidden')
+
+class RegisterViewSet(viewsets.ViewSet):
+    http_method_names = ['post', 'options', 'head']
+    permission_classes = [AllowAny]
+
+    def create(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.validate(request.data):
+            user = serializer.create(request.data)
+            return Response({'status': '201'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AuthTokenViewset(viewsets.ViewSet):
+
+    http_method_names = ['post', 'options', 'head']
+    permission_classes = [AllowAny]
+
+    def create(self, request):
+        view = CustomTokenObtainPairView.as_view()
+        try:
+            response = view(request._request)
+            data = response.data
+
+            if 'refresh' in data and 'access' in data:
+                access_token = data.get('access')
+                decoded_access = jwt.decode(access_token, settings.SECRET_KEY, algorithms=["HS256"])
+
+                return Response({
+                    'refresh': data['refresh'],
+                    'access': data['access'],
+                    'user_id': decoded_access['user_id'],
+                    'is_superuser': decoded_access['is_superuser'],
+                    'uuid': decoded_access['uuid']
+                }, status=status.HTTP_200_OK)
+            else:
+                if 'No active account found with the given credentials' in data['detail']:
+                    return Response({
+                                        'error': 'No se encontró ninguna cuenta activa con las credenciales proporcionadas, verifique sus datos!'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+        except TokenError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except InvalidToken as e:
+            return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+        except TokenBackendError as e:
+            return Response({'error': 'Token backend error'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

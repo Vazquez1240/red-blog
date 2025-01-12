@@ -5,7 +5,7 @@ from django.contrib import auth
 
 @admin.register(User)
 class UserAdmin(auth.admin.UserAdmin):
-    list_display = ('email','is_active', 'is_staff')
+    list_display = ('email','is_active', 'is_staff', 'uuid')
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.is_superuser:
