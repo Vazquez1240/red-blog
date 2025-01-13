@@ -18,7 +18,7 @@ class PostViewSet(viewsets.ModelViewSet):
         elif user.is_staff:
             return Post.objects.all()
         else:
-            return Post.objects.all()
+            return Post.objects.filter(author_uuid=user.uuid)
 
 
     def create(self, request, *args, **kwargs):
