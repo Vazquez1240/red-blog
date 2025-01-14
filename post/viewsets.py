@@ -9,6 +9,7 @@ from rest_framework.response import Response
 class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
+    http_method_names = ['get', 'post']
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -19,6 +20,10 @@ class PostViewSet(viewsets.ModelViewSet):
             return Post.objects.all()
         else:
             return Post.objects.filter(author_uuid=user.uuid)
+
+    def retrieve(self, request, *args, **kwargs):
+        """Deshabilitar la obtención de un detalle específico."""
+        return Response({'detail': 'Método no permitido.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
     def create(self, request, *args, **kwargs):

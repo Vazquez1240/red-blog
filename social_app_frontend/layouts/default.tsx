@@ -1,4 +1,5 @@
 import { Link } from "@nextui-org/link";
+import { useRouter } from "next/router";
 
 import { Head } from "./head";
 
@@ -9,10 +10,12 @@ export default function DefaultLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+
   return (
     <div className="relative flex flex-col h-screen">
       <Head />
-      <Navbar />
+      {router.pathname === "/" ? null : <Navbar />}
       <main className="container mx-auto max-w-7xl px-6 flex-grow pt-16">
         {children}
       </main>

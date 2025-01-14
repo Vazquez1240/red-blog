@@ -37,7 +37,7 @@ class ProfilesViewset(viewsets.ModelViewSet):
                     "data_posts": serializer.data
                 })
 
-class ProfileViewset(viewsets.ViewSet):
+class ProfileViewset(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = PostSerializer
     parser_classes = (JSONParser,)

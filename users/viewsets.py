@@ -1,3 +1,5 @@
+from rest_framework.decorators import action
+
 from .models import User
 from .serializers import UserSerializer, CustomTokenObtainPairSerializer
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
@@ -33,7 +35,7 @@ class UserViewSet(viewsets.ModelViewSet):
             raise exceptions.PermissionDenied('Forbidden')
 
 class RegisterViewSet(viewsets.ViewSet):
-    http_method_names = ['post', 'options', 'head']
+    http_method_names = ['post', 'options', 'head', 'patch']
     permission_classes = [AllowAny]
 
     def create(self, request):
@@ -42,6 +44,26 @@ class RegisterViewSet(viewsets.ViewSet):
             user = serializer.create(request.data)
             return Response({'status': '201'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['patch'], detail=False, url_path='create-username', url_name='create-username')
+    def create_username(self, request):
+        if self.request.data.get('email') is None or self.request.data.get('username') is None:
+            return Response({'error': 'Email and username are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=self.request.data.get('email'))
+        except User.DoesNotExist:
+            return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.username = self.request.data.get('username')
+
+        user.save()
+
+        serializer = UserSerializer(user)
+
+        return Response(serializer.data)
+
+
 
 class AuthTokenViewset(viewsets.ViewSet):
 
