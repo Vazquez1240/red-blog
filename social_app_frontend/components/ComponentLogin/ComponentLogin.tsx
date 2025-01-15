@@ -3,29 +3,30 @@ import { Button } from "@nextui-org/button";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { LuUser, LuKeyRound } from "react-icons/lu";
+import { CircularProgress } from "@nextui-org/react";
+import axios from "axios";
 
 import { FormDataLogin } from "@/interface/interfaces";
 
 export default function ComponentLogin() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
   const [formData, setFormData] = useState<FormDataLogin>({
     email: "",
     password: "",
   });
-  const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [submitForm, setSubmitForm] = useState(false)
+  const [errors, setErrors] = useState<Partial<FormDataLogin>>({});
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-    if (errors[name as keyof FormData]) {
+
+    // Limpiar error cuando el usuario empieza a escribir
+    if (errors[name as keyof FormDataLogin]) {
       setErrors((prevErrors) => ({
         ...prevErrors,
         [name]: undefined,
@@ -33,8 +34,41 @@ export default function ComponentLogin() {
     }
   };
 
-  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const validateForm = () => {
+    const newErrors: Partial<FormDataLogin> = {};
+
+    if (!formData.email.trim()) {
+      newErrors.email = "El correo es requerido";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Correo no es válido";
+    }
+    if (!formData.password.trim()) {
+      newErrors.password = "La contraseña es requerida";
+    }
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSubmitForm(true)
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    if (!validateForm()) {
+      setSubmitForm(false)
+      return;
+    }
+    const response = await axios.post('http://localhost:8000/rest/v1/login/', formData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        }
+      })
+
+    if (response.status === 200){
+      setSubmitForm(false)
+    }
+
   };
 
   return (
@@ -42,6 +76,7 @@ export default function ComponentLogin() {
       <motion.form
         animate={{ opacity: 1 }}
         className="space-y-6"
+        onSubmit={handleSubmit}
         initial={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
       >
@@ -57,17 +92,21 @@ export default function ComponentLogin() {
             initial={{ x: -20, opacity: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            <label htmlFor="email">Correo electronico</label>
+            <label htmlFor="email">Correo electrónico</label>
             <Input
+              name="email"
               required
-              color={"primary"}
+              errorMessage={errors.email}
+              isInvalid={!!errors.email}
+              color="primary"
               id="email"
-              placeholder={"Corre electronico"}
+              placeholder="Correo electrónico"
               startContent={
-                <LuUser className={`pointer-events-none flex-shrink-0}`} />
+                <LuUser className="pointer-events-none flex-shrink-0" />
               }
               type="email"
-              variant={"bordered"}
+              variant="bordered"
+              value={formData.email}
               onChange={handleChange}
             />
           </motion.div>
@@ -78,18 +117,21 @@ export default function ComponentLogin() {
           >
             <label htmlFor="password">Contraseña</label>
             <Input
+              name="password"
               required
-              color={"primary"}
+              color="primary"
+              errorMessage={errors.password}
+              isInvalid={!!errors.password}
               id="password"
-              placeholder={"********"}
+              placeholder="********"
               startContent={
-                <LuKeyRound className={`pointer-events-none flex-shrink-0}`} />
+                <LuKeyRound className="pointer-events-none flex-shrink-0" />
               }
               type="password"
-              variant={"bordered"}
+              value={formData.password}
+              variant="bordered"
               onChange={handleChange}
             />
-            <div />
           </motion.div>
           <motion.div
             animate={{ x: 0, opacity: 1 }}
@@ -97,8 +139,14 @@ export default function ComponentLogin() {
             initial={{ x: -20, opacity: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            <Button color={"primary"} fullWidth={true}>
-              Iniciar sesión
+            <Button
+              type="submit"
+              color="primary"
+              isDisabled={submitForm}
+              fullWidth>
+              {
+                submitForm ? <CircularProgress aria-label="Loading..." size="sm" /> : 'Iniciar sesión'
+              }
             </Button>
           </motion.div>
         </motion.div>

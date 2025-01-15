@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { title, subtitle } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
 import ComponentLogin from "@/components/ComponentLogin/ComponentLogin";
+import ComponenteRegistro from "@/components/ComponenteRegistro/ComponenteRegistro";
 
 export default function IndexPage() {
   const [registro, setRegistro] = useState<boolean>(false);
@@ -18,7 +19,7 @@ export default function IndexPage() {
         <section className="w-full h-full flex justify-center items-center">
           <motion.div
             animate={{ opacity: 1, y: 0 }}
-            className=" grid grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-8"
+            className=" grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-8 sm:grid-cols-1"
             initial={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5 }}
           >
@@ -43,7 +44,7 @@ export default function IndexPage() {
               initial={{ opacity: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
             >
-              <Card className="h-auto p-6">
+              <Card className="h-[550px] p-6">
                 <CardHeader className="flex flex-col content-center">
                   <motion.div
                     animate={{ opacity: 1 }}
@@ -65,8 +66,8 @@ export default function IndexPage() {
                     Conéctate con amigos y el mundo que te rodea
                   </span>
                 </CardHeader>
-                <CardBody>
-                  {registro ? <p>no es login</p> : <ComponentLogin />}
+                <CardBody className="flex flex-col justify-center items-center">
+                  {registro ? <ComponenteRegistro /> : <ComponentLogin />}
                 </CardBody>
                 <CardFooter className="w-full flex justify-center">
                   <motion.div
