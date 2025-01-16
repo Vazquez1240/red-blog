@@ -2,10 +2,12 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { LuUser, LuKeyRound, LuMail } from "react-icons/lu";
+import { LuKeyRound, LuMail, LuCircleCheck, LuCircleX } from "react-icons/lu";
 import { CircularProgress } from "@nextui-org/react";
 import axios from "axios";
 
+import { RegistroResponse } from "@/interface/interfaces";
+import ComponenteModal from "@/components/Genericos/ComponenteModal";
 import { FormDataRegister } from "@/interface/interfaces";
 
 export default function ComponenteRegistro() {
@@ -13,15 +15,21 @@ export default function ComponenteRegistro() {
     email: "",
     password: "",
     password2: "",
-    username: ""
+    username: "",
   });
-  const [submitForm, setSubmitForm] = useState(false)
+  const [submitForm, setSubmitForm] = useState(false);
   const [errors, setErrors] = useState<Partial<FormDataRegister>>({});
+  const [showModal, setShowModal] = useState(false);
+  const [username, setUsername] = useState("");
+  const [modalVerify, setModalVerify] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [messageError, setMessageError] = useState("");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -54,23 +62,67 @@ export default function ComponenteRegistro() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitForm(true)
+    setSubmitForm(true);
     await new Promise((resolve) => setTimeout(resolve, 800));
     if (!validateForm()) {
-      setSubmitForm(false)
+      setSubmitForm(false);
+
       return;
     }
-    const response = await axios.post('http://localhost:8000/rest/v1/register/', formData,
+    try {
+      const response: RegistroResponse = await axios.post(
+        "http://localhost:8000/rest/v1/register/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (response.status === 201) {
+        setSubmitForm(false);
+        setShowModal(true);
+
+        return;
+      }
+    } catch (error: any) {
+      setSubmitForm(false);
+      setShowModal(true)
+      setModalVerify(true);
+      setSuccess(false);
+
+      if (error.response.data.email) {
+        setMessageError(error.response.data.email);
+      }
+
+      return error;
+    }
+  };
+
+  const PostUsername = async () => {
+    const response: RegistroResponse = await axios.patch(
+      "http://localhost:8000/rest/v1/register/create-username/",
+      {
+        email: formData.email,
+        username: username,
+      },
       {
         headers: {
-          "Content-Type": "application/json",
-        }
-      })
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
 
-    if (response.status === 201){
-      setSubmitForm(false)
+    if (response.status === 200) {
+      setSubmitForm(false);
+      setModalVerify(true);
+      setSuccess(true);
+
+      return;
     }
-
+    setModalVerify(true);
+    setSuccess(false);
   };
 
   return (
@@ -78,9 +130,9 @@ export default function ComponenteRegistro() {
       <motion.form
         animate={{ opacity: 1 }}
         className="space-y-6"
-        onSubmit={handleSubmit}
         initial={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
+        onSubmit={handleSubmit}
       >
         <motion.div
           animate={{ x: 0, opacity: 1 }}
@@ -96,19 +148,19 @@ export default function ComponenteRegistro() {
           >
             <label htmlFor="email">Correo electrónico</label>
             <Input
-              name="email"
               required
-              errorMessage={errors.email}
-              isInvalid={!!errors.email}
               color="primary"
+              errorMessage={errors.email}
               id="email"
+              isInvalid={!!errors.email}
+              name="email"
               placeholder="Correo electrónico"
               startContent={
                 <LuMail className="pointer-events-none flex-shrink-0" />
               }
               type="email"
-              variant="bordered"
               value={formData.email}
+              variant="bordered"
               onChange={handleChange}
             />
           </motion.div>
@@ -119,12 +171,12 @@ export default function ComponenteRegistro() {
           >
             <label htmlFor="password">Contraseña</label>
             <Input
-              name="password"
               required
               color="primary"
               errorMessage={errors.password}
-              isInvalid={!!errors.password}
               id="password"
+              isInvalid={!!errors.password}
+              name="password"
               placeholder="********"
               startContent={
                 <LuKeyRound className="pointer-events-none flex-shrink-0" />
@@ -143,12 +195,12 @@ export default function ComponenteRegistro() {
           >
             <label htmlFor="password">Confirmar contraseña</label>
             <Input
-              name="password2"
               required
               color="primary"
               errorMessage={errors.password2}
-              isInvalid={!!errors.password2}
               id="password"
+              isInvalid={!!errors.password2}
+              name="password2"
               placeholder="********"
               startContent={
                 <LuKeyRound className="pointer-events-none flex-shrink-0" />
@@ -166,18 +218,53 @@ export default function ComponenteRegistro() {
             transition={{ delay: 0.2, duration: 0.5 }}
           >
             <Button
-              type="submit"
+              fullWidth
               color="primary"
               isDisabled={submitForm}
-              fullWidth>
-              {
-                submitForm ? <CircularProgress aria-label="Loading..." size="sm" /> : 'Crear cuenta'
-              }
+              type="submit"
+            >
+              {submitForm ? (
+                <CircularProgress aria-label="Loading..." size="sm" />
+              ) : (
+                "Crear cuenta"
+              )}
             </Button>
           </motion.div>
         </motion.div>
       </motion.form>
+      <div>
+        <ComponenteModal
+          GenericData={{
+            status: showModal,
+            modal_verify: modalVerify,
+            isSuccesOrFail: success,
+            type_modal: "input",
+            inputData: username,
+            setInputValue: setUsername,
+            close: setShowModal,
+          }}
+          ModalData={{
+            titulo: "Elige tu nombre de usuario",
+            message: "Nombre de usuario",
+            textBtn: "Guardar",
+            function_buton: PostUsername,
+          }}
+          ModalFail={{
+            icon: LuCircleX,
+            titulo: "¡Error!",
+            message: messageError,
+            textBtn: "Cerrar",
+            function_buton: () => setShowModal(false),
+          }}
+          ModalSuccess={{
+            icon: LuCircleCheck,
+            titulo: "¡Excelente!",
+            message: "Usuario creado con exito!",
+            textBtn: "Cerrar",
+            function_buton: () => setShowModal(false),
+          }}
+        />
+      </div>
     </section>
   );
 }
-

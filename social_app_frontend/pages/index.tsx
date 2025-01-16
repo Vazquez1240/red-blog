@@ -44,7 +44,7 @@ export default function IndexPage() {
               initial={{ opacity: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
             >
-              <Card className="h-[550px] p-6">
+              <Card className="h-[650px] sm:h-[580px] p-6">
                 <CardHeader className="flex flex-col content-center">
                   <motion.div
                     animate={{ opacity: 1 }}
