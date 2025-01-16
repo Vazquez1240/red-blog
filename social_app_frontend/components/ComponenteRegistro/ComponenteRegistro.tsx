@@ -1,9 +1,9 @@
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
+import { Input } from "@heroui/input";
+import { Button } from "@heroui/button";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { LuKeyRound, LuMail, LuCircleCheck, LuCircleX } from "react-icons/lu";
-import { CircularProgress } from "@nextui-org/react";
+import { CircularProgress } from "@heroui/react";
 import axios from "axios";
 
 import { RegistroResponse } from "@/interface/interfaces";
@@ -44,6 +44,13 @@ export default function ComponenteRegistro() {
     }
   };
 
+  const restStates = () => {
+    setShowModal(false);
+    setModalVerify(false);
+    setSuccess(false);
+    setMessageError("");
+  };
+
   const validateForm = () => {
     const newErrors: Partial<FormDataRegister> = {};
 
@@ -63,6 +70,7 @@ export default function ComponenteRegistro() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitForm(true);
+    restStates();
     await new Promise((resolve) => setTimeout(resolve, 800));
     if (!validateForm()) {
       setSubmitForm(false);
@@ -88,9 +96,11 @@ export default function ComponenteRegistro() {
       }
     } catch (error: any) {
       setSubmitForm(false);
-      setShowModal(true)
+      setShowModal(true);
       setModalVerify(true);
       setSuccess(false);
+
+      console.log("entrando");
 
       if (error.response.data.email) {
         setMessageError(error.response.data.email);
@@ -239,6 +249,7 @@ export default function ComponenteRegistro() {
             modal_verify: modalVerify,
             isSuccesOrFail: success,
             type_modal: "input",
+            backdrop: "blur",
             inputData: username,
             setInputValue: setUsername,
             close: setShowModal,

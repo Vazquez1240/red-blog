@@ -1,7 +1,7 @@
 "use client";
 
-import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
-import { Button } from "@nextui-org/button";
+import { Card, CardHeader, CardBody, CardFooter } from "@heroui/react";
+import { Button } from "@heroui/button";
 import { useState } from "react";
 import { motion } from "framer-motion";
 

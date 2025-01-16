@@ -25,6 +25,7 @@ export interface GenericDataBase {
   status: boolean;
   isSuccesOrFail: boolean;
   modal_verify: boolean;
+  backdrop: "blur";
   close: (value: boolean) => void;
 }
 export interface GenericDataInput extends GenericDataBase {

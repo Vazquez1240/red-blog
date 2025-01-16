@@ -1,9 +1,9 @@
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
+import { Input } from "@heroui/input";
+import { Button } from "@heroui/button";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { LuUser, LuKeyRound } from "react-icons/lu";
-import { CircularProgress } from "@nextui-org/react";
+import { CircularProgress } from "@heroui/react";
 import axios from "axios";
 
 import { FormDataLogin } from "@/interface/interfaces";

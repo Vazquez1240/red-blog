@@ -1,4 +1,4 @@
-import { Link } from "@nextui-org/link";
+import { Link } from "@heroui/link";
 import { useRouter } from "next/router";
 
 import { Head } from "./head";

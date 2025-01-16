@@ -7,8 +7,8 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
-} from "@nextui-org/react";
-import { Input } from "@nextui-org/input";
+} from "@heroui/react";
+import { Input } from "@heroui/input";
 
 import {
   GenericData,
@@ -64,6 +64,7 @@ export default function AnimatedModal({
     <AnimatePresence>
       {GenericData.status && (
         <Modal
+          backdrop={GenericData.backdrop}
           isOpen={GenericData.status}
           motionProps={{
             variants: modalVariants,
@@ -72,7 +73,7 @@ export default function AnimatedModal({
             exit: "exit",
           }}
           onOpenChange={(isOpen) => {
-            if (!isOpen) GenericData.close(false); // Maneja el cierre aquí
+            if (!isOpen) GenericData.close(false);
           }}
         >
           <ModalContent>
