@@ -9,8 +9,13 @@ import axios from "axios";
 import { RegistroResponse } from "@/interface/interfaces";
 import ComponenteModal from "@/components/Genericos/ComponenteModal";
 import { FormDataRegister } from "@/interface/interfaces";
+import Confetti from "react-confetti";
 
-export default function ComponenteRegistro() {
+interface Props {
+  functionConfeti: (val: boolean) => void;
+}
+
+export default function ComponenteRegistro( {functionConfeti}: Props ) {
   const [formData, setFormData] = useState<FormDataRegister>({
     email: "",
     password: "",
@@ -100,8 +105,6 @@ export default function ComponenteRegistro() {
       setModalVerify(true);
       setSuccess(false);
 
-      console.log("entrando");
-
       if (error.response.data.email) {
         setMessageError(error.response.data.email);
       }
@@ -128,7 +131,7 @@ export default function ComponenteRegistro() {
       setSubmitForm(false);
       setModalVerify(true);
       setSuccess(true);
-
+      functionConfeti(true)
       return;
     }
     setModalVerify(true);
@@ -248,6 +251,7 @@ export default function ComponenteRegistro() {
             status: showModal,
             modal_verify: modalVerify,
             isSuccesOrFail: success,
+            isDismissable: false,
             type_modal: "input",
             backdrop: "blur",
             inputData: username,

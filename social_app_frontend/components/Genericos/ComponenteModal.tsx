@@ -9,6 +9,7 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { Input } from "@heroui/input";
+import Confetti from 'react-confetti';
 
 import {
   GenericData,
@@ -24,7 +25,7 @@ interface Props {
   ModalFail: ModalFail;
 }
 
-export default function AnimatedModal({
+export default function  AnimatedModal({
   GenericData,
   ModalData,
   ModalSuccess,
@@ -64,6 +65,7 @@ export default function AnimatedModal({
     <AnimatePresence>
       {GenericData.status && (
         <Modal
+          isDismissable={GenericData.isDismissable}
           backdrop={GenericData.backdrop}
           isOpen={GenericData.status}
           motionProps={{

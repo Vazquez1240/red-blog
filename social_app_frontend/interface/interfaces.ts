@@ -25,6 +25,7 @@ export interface GenericDataBase {
   status: boolean;
   isSuccesOrFail: boolean;
   modal_verify: boolean;
+  isDismissable?: false;
   backdrop: "blur";
   close: (value: boolean) => void;
 }
