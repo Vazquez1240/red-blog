@@ -57,6 +57,9 @@ class RegisterViewSet(viewsets.ViewSet):
 
         user.username = self.request.data.get('username')
 
+        if User.objects.filter(username=self.request.data.get('username')).exists():
+            return Response({"username": "Este nombre de usuario ya esta en uso."}, status=status.HTTP_400_BAD_REQUEST)
+
         user.save()
 
         serializer = UserSerializer(user)

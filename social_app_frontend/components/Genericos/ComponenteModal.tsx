@@ -45,7 +45,6 @@ export default function ComponenteModal({
   };
 
   const handleButtonClickFail = () => {
-    console.log("entrando");
     ModalFail.function_buton();
   };
 
@@ -53,7 +52,7 @@ export default function ComponenteModal({
     if (isCompleted) {
       const timer = setTimeout(() => {
         setIsCompleted(false);
-      }, 3000); // Reset completion state after 3 seconds
+      }, 3000);
 
       return () => clearTimeout(timer);
     }

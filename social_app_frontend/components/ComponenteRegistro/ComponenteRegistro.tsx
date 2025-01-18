@@ -52,6 +52,7 @@ export default function ComponenteRegistro({ functionConfeti }: Props) {
     setShowModal(false);
     setModalVerify(false);
     setSuccess(false);
+    setUsername("");
     setMessageError("");
   };
 
@@ -81,12 +82,15 @@ export default function ComponenteRegistro({ functionConfeti }: Props) {
   };
 
   const resetFail = async () => {
-    console.log("eee");
+    console.log(messageError, 'messageError')
+    if (messageError[0] === 'Ya existe un usuario con ese correo electrónico.'){
+      setShowModal(false)
+
+      return ;
+    }
     setModalVerify(false);
     setSuccess(false);
     setMessageError("");
-
-    return;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -293,7 +297,7 @@ export default function ComponenteRegistro({ functionConfeti }: Props) {
             backdrop: "blur",
             inputData: username,
             setInputValue: setUsername,
-            close: setShowModal,
+            close: () => restStates,
           }}
           ModalData={{
             titulo: "Elige tu nombre de usuario",
@@ -306,7 +310,7 @@ export default function ComponenteRegistro({ functionConfeti }: Props) {
             titulo: "¡Error!",
             message: messageError,
             textBtn: "Cerrar",
-            function_buton: () => resetFail,
+            function_buton: resetFail,
           }}
           ModalSuccess={{
             icon: LuCircleCheck,

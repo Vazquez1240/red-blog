@@ -60,6 +60,14 @@ class User(AbstractUser):
         verbose_name = "Usuario"
         verbose_name_plural = "Usuarios"
 
+        constraints = [
+            models.UniqueConstraint(
+                fields=['username', 'email'],
+                name='unique_username_email'
+            )
+        ]
+
+
 class Group(OriginalGroup):
     class Meta:
         proxy = True
