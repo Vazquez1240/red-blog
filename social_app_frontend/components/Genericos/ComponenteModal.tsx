@@ -9,7 +9,6 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { Input } from "@heroui/input";
-import Confetti from 'react-confetti';
 
 import {
   GenericData,
@@ -25,7 +24,7 @@ interface Props {
   ModalFail: ModalFail;
 }
 
-export default function  AnimatedModal({
+export default function ComponenteModal({
   GenericData,
   ModalData,
   ModalSuccess,
@@ -43,6 +42,11 @@ export default function  AnimatedModal({
   const handleButtonClick = () => {
     ModalData.function_buton();
     setIsCompleted(true);
+  };
+
+  const handleButtonClickFail = () => {
+    console.log("entrando");
+    ModalFail.function_buton();
   };
 
   useEffect(() => {
@@ -65,8 +69,8 @@ export default function  AnimatedModal({
     <AnimatePresence>
       {GenericData.status && (
         <Modal
-          isDismissable={GenericData.isDismissable}
           backdrop={GenericData.backdrop}
+          isDismissable={GenericData.isDismissable}
           isOpen={GenericData.status}
           motionProps={{
             variants: modalVariants,
@@ -183,10 +187,7 @@ export default function  AnimatedModal({
                     }}
                     className={"w-full flex justify-center items-center"}
                   >
-                    <ModalFail.icon
-                      className="text-red-500"
-                      fontSize={55}
-                    />
+                    <ModalFail.icon className="text-red-500" fontSize={55} />
                   </motion.div>
                   <motion.div
                     animate={{ opacity: 1, y: 0 }}
@@ -198,6 +199,16 @@ export default function  AnimatedModal({
                       {ModalFail.titulo}
                     </h2>
                     <p className="text-gray-600">{ModalFail.message}</p>
+                  </motion.div>
+                  <motion.div
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex flex-col w-full mt-3"
+                    initial={{ opacity: 0, y: 20 }}
+                    transition={{ delay: 0.3, duration: 0.5 }}
+                  >
+                    <Button color={"primary"} onPress={handleButtonClickFail}>
+                      Reintentar
+                    </Button>
                   </motion.div>
                 </motion.div>
               )}

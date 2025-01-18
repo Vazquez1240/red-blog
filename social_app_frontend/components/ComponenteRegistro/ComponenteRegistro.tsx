@@ -9,13 +9,12 @@ import axios from "axios";
 import { RegistroResponse } from "@/interface/interfaces";
 import ComponenteModal from "@/components/Genericos/ComponenteModal";
 import { FormDataRegister } from "@/interface/interfaces";
-import Confetti from "react-confetti";
 
 interface Props {
   functionConfeti: (val: boolean) => void;
 }
 
-export default function ComponenteRegistro( {functionConfeti}: Props ) {
+export default function ComponenteRegistro({ functionConfeti }: Props) {
   const [formData, setFormData] = useState<FormDataRegister>({
     email: "",
     password: "",
@@ -67,9 +66,27 @@ export default function ComponenteRegistro( {functionConfeti}: Props ) {
     if (!formData.password.trim()) {
       newErrors.password = "La contraseña es requerida";
     }
+    if (!formData.password2.trim()) {
+      newErrors.password2 = "Este campo es obligatorio";
+    }
+
+    if (formData.password != formData.password2) {
+      newErrors.password = "Las contraseñas no coinciden!";
+      newErrors.password2 = "Las contraseñas no coinciden!";
+    }
+
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
+  };
+
+  const resetFail = async () => {
+    console.log("eee");
+    setModalVerify(false);
+    setSuccess(false);
+    setMessageError("");
+
+    return;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -114,28 +131,44 @@ export default function ComponenteRegistro( {functionConfeti}: Props ) {
   };
 
   const PostUsername = async () => {
-    const response: RegistroResponse = await axios.patch(
-      "http://localhost:8000/rest/v1/register/create-username/",
-      {
-        email: formData.email,
-        username: username,
-      },
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
+    try {
+      const response: RegistroResponse = await axios.patch(
+        "http://localhost:8000/rest/v1/register/create-username/",
+        {
+          email: formData.email,
+          username: username,
         },
-      },
-    );
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
 
-    if (response.status === 200) {
-      setSubmitForm(false);
+      if (response.status === 200) {
+        setSubmitForm(false);
+        setModalVerify(true);
+        setUsername("");
+        setSuccess(true);
+        functionConfeti(true);
+
+        return;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error: any) {
       setModalVerify(true);
-      setSuccess(true);
-      functionConfeti(true)
-      return;
+      setSuccess(false);
+      if (error.response.data.username) {
+        setMessageError(error.response.data.username);
+      }
     }
-    setModalVerify(true);
-    setSuccess(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
+    }
   };
 
   return (
@@ -147,6 +180,7 @@ export default function ComponenteRegistro( {functionConfeti}: Props ) {
         transition={{ duration: 0.5 }}
         onSubmit={handleSubmit}
       >
+        <button style={{ display: "none" }} type="submit" />
         <motion.div
           animate={{ x: 0, opacity: 1 }}
           className="flex flex-col gap-4"
@@ -175,6 +209,7 @@ export default function ComponenteRegistro( {functionConfeti}: Props ) {
               value={formData.email}
               variant="bordered"
               onChange={handleChange}
+              onKeyDown={handleKeyDown}
             />
           </motion.div>
           <motion.div
@@ -198,6 +233,7 @@ export default function ComponenteRegistro( {functionConfeti}: Props ) {
               value={formData.password}
               variant="bordered"
               onChange={handleChange}
+              onKeyDown={handleKeyDown}
             />
           </motion.div>
 
@@ -222,6 +258,7 @@ export default function ComponenteRegistro( {functionConfeti}: Props ) {
               value={formData.password2}
               variant="bordered"
               onChange={handleChange}
+              onKeyDown={handleKeyDown}
             />
           </motion.div>
           <motion.div
@@ -269,7 +306,7 @@ export default function ComponenteRegistro( {functionConfeti}: Props ) {
             titulo: "¡Error!",
             message: messageError,
             textBtn: "Cerrar",
-            function_buton: () => setShowModal(false),
+            function_buton: () => resetFail,
           }}
           ModalSuccess={{
             icon: LuCircleCheck,

@@ -13,19 +13,19 @@ export default function ComponentLogin() {
     email: "",
     password: "",
   });
-  const [submitForm, setSubmitForm] = useState(false)
+  const [submitForm, setSubmitForm] = useState(false);
   const [errors, setErrors] = useState<Partial<FormDataLogin>>({});
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
 
-    // Limpiar error cuando el usuario empieza a escribir
     if (errors[name as keyof FormDataLogin]) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -52,23 +52,33 @@ export default function ComponentLogin() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitForm(true)
+    setSubmitForm(true);
     await new Promise((resolve) => setTimeout(resolve, 800));
     if (!validateForm()) {
-      setSubmitForm(false)
+      setSubmitForm(false);
+
       return;
     }
-    const response = await axios.post('http://localhost:8000/rest/v1/login/', formData,
+    const response = await axios.post(
+      "http://localhost:8000/rest/v1/login/",
+      formData,
       {
         headers: {
           "Content-Type": "application/json",
-        }
-      })
+        },
+      },
+    );
 
-    if (response.status === 200){
-      setSubmitForm(false)
+    if (response.status === 200) {
+      setSubmitForm(false);
     }
+  };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
+    }
   };
 
   return (
@@ -76,10 +86,11 @@ export default function ComponentLogin() {
       <motion.form
         animate={{ opacity: 1 }}
         className="space-y-6"
-        onSubmit={handleSubmit}
         initial={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
+        onSubmit={handleSubmit}
       >
+        <button style={{ display: "none" }} type="submit" />
         <motion.div
           animate={{ x: 0, opacity: 1 }}
           className="flex flex-col gap-4"
@@ -94,20 +105,21 @@ export default function ComponentLogin() {
           >
             <label htmlFor="email">Correo electrónico</label>
             <Input
-              name="email"
               required
-              errorMessage={errors.email}
-              isInvalid={!!errors.email}
               color="primary"
+              errorMessage={errors.email}
               id="email"
+              isInvalid={!!errors.email}
+              name="email"
               placeholder="Correo electrónico"
               startContent={
                 <LuUser className="pointer-events-none flex-shrink-0" />
               }
               type="email"
-              variant="bordered"
               value={formData.email}
+              variant="bordered"
               onChange={handleChange}
+              onKeyDown={handleKeyDown}
             />
           </motion.div>
           <motion.div
@@ -117,12 +129,12 @@ export default function ComponentLogin() {
           >
             <label htmlFor="password">Contraseña</label>
             <Input
-              name="password"
               required
               color="primary"
               errorMessage={errors.password}
-              isInvalid={!!errors.password}
               id="password"
+              isInvalid={!!errors.password}
+              name="password"
               placeholder="********"
               startContent={
                 <LuKeyRound className="pointer-events-none flex-shrink-0" />
@@ -131,6 +143,7 @@ export default function ComponentLogin() {
               value={formData.password}
               variant="bordered"
               onChange={handleChange}
+              onKeyDown={handleKeyDown}
             />
           </motion.div>
           <motion.div
@@ -140,13 +153,16 @@ export default function ComponentLogin() {
             transition={{ delay: 0.2, duration: 0.5 }}
           >
             <Button
-              type="submit"
+              fullWidth
               color="primary"
               isDisabled={submitForm}
-              fullWidth>
-              {
-                submitForm ? <CircularProgress aria-label="Loading..." size="sm" /> : 'Iniciar sesión'
-              }
+              type="submit"
+            >
+              {submitForm ? (
+                <CircularProgress aria-label="Loading..." size="sm" />
+              ) : (
+                "Iniciar sesión"
+              )}
             </Button>
           </motion.div>
         </motion.div>
