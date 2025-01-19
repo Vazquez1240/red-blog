@@ -9,6 +9,7 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { Input } from "@heroui/input";
+import { useTheme } from "next-themes";
 
 import {
   GenericData,
@@ -32,6 +33,14 @@ export default function ComponenteModal({
 }: Props) {
   const { onOpenChange } = useDisclosure();
   const [isCompleted, setIsCompleted] = useState(false);
+
+  const theme = useTheme();
+
+  const tema =
+    theme.theme === "dark" ||
+    (theme.theme === "system" && theme.systemTheme === "dark")
+      ? "dark"
+      : "light";
 
   const handleOnChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     GenericData.type_modal === "input"
@@ -127,7 +136,10 @@ export default function ComponenteModal({
                     )}
                   </ModalBody>
                   <ModalFooter>
-                    <Button color="primary" onPress={handleButtonClick}>
+                    <Button
+                      color={`${tema === "dark" ? "default" : "primary"}`}
+                      onPress={handleButtonClick}
+                    >
                       {ModalData.textBtn}
                     </Button>
                   </ModalFooter>
@@ -164,7 +176,11 @@ export default function ComponenteModal({
                     <h2 className="text-2xl font-bold mb-2">
                       {ModalSuccess.titulo}
                     </h2>
-                    <p className="text-gray-600">{ModalSuccess.message}</p>
+                    <p
+                      className={`${tema === "dark" ? "text-white" : "text-gray-500"}`}
+                    >
+                      {ModalSuccess.message}
+                    </p>
                   </motion.div>
                 </motion.div>
               ) : (
@@ -197,7 +213,11 @@ export default function ComponenteModal({
                     <h2 className="text-2xl font-bold mb-2">
                       {ModalFail.titulo}
                     </h2>
-                    <p className="text-gray-600">{ModalFail.message}</p>
+                    <p
+                      className={`${tema === "dark" ? "text-white" : "text-gray-500"}`}
+                    >
+                      {ModalFail.message}
+                    </p>
                   </motion.div>
                   <motion.div
                     animate={{ opacity: 1, y: 0 }}
@@ -205,7 +225,10 @@ export default function ComponenteModal({
                     initial={{ opacity: 0, y: 20 }}
                     transition={{ delay: 0.3, duration: 0.5 }}
                   >
-                    <Button color={"primary"} onPress={handleButtonClickFail}>
+                    <Button
+                      color={`${tema === "dark" ? "default" : "primary"}`}
+                      onPress={handleButtonClickFail}
+                    >
                       Reintentar
                     </Button>
                   </motion.div>

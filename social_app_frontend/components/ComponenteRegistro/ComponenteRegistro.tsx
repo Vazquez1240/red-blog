@@ -9,6 +9,7 @@ import axios from "axios";
 import { RegistroResponse } from "@/interface/interfaces";
 import ComponenteModal from "@/components/Genericos/ComponenteModal";
 import { FormDataRegister } from "@/interface/interfaces";
+import { useTheme } from "next-themes";
 
 interface Props {
   functionConfeti: (val: boolean) => void;
@@ -28,6 +29,12 @@ export default function ComponenteRegistro({ functionConfeti }: Props) {
   const [modalVerify, setModalVerify] = useState(false);
   const [success, setSuccess] = useState(false);
   const [messageError, setMessageError] = useState("");
+  const theme = useTheme();
+  const tema =
+    theme.theme === "dark" ||
+    (theme.theme === "system" && theme.systemTheme === "dark")
+      ? "dark"
+      : "light";
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -82,11 +89,12 @@ export default function ComponenteRegistro({ functionConfeti }: Props) {
   };
 
   const resetFail = async () => {
-    console.log(messageError, 'messageError')
-    if (messageError[0] === 'Ya existe un usuario con ese correo electrónico.'){
-      setShowModal(false)
+    if (
+      messageError[0] === "Ya existe un usuario con ese correo electrónico."
+    ) {
+      setShowModal(false);
 
-      return ;
+      return;
     }
     setModalVerify(false);
     setSuccess(false);
@@ -135,6 +143,7 @@ export default function ComponenteRegistro({ functionConfeti }: Props) {
   };
 
   const PostUsername = async () => {
+    functionConfeti(false);
     try {
       const response: RegistroResponse = await axios.patch(
         "http://localhost:8000/rest/v1/register/create-username/",
@@ -200,7 +209,7 @@ export default function ComponenteRegistro({ functionConfeti }: Props) {
             <label htmlFor="email">Correo electrónico</label>
             <Input
               required
-              color="primary"
+              color={`${tema === "dark" ? "default" : "primary"}`}
               errorMessage={errors.email}
               id="email"
               isInvalid={!!errors.email}
@@ -224,7 +233,7 @@ export default function ComponenteRegistro({ functionConfeti }: Props) {
             <label htmlFor="password">Contraseña</label>
             <Input
               required
-              color="primary"
+              color={`${tema === "dark" ? "default" : "primary"}`}
               errorMessage={errors.password}
               id="password"
               isInvalid={!!errors.password}
@@ -249,7 +258,7 @@ export default function ComponenteRegistro({ functionConfeti }: Props) {
             <label htmlFor="password">Confirmar contraseña</label>
             <Input
               required
-              color="primary"
+              color={`${tema === "dark" ? "default" : "primary"}`}
               errorMessage={errors.password2}
               id="password"
               isInvalid={!!errors.password2}
@@ -273,7 +282,7 @@ export default function ComponenteRegistro({ functionConfeti }: Props) {
           >
             <Button
               fullWidth
-              color="primary"
+              color={`${tema === "dark" ? "default" : "primary"}`}
               isDisabled={submitForm}
               type="submit"
             >
@@ -297,7 +306,7 @@ export default function ComponenteRegistro({ functionConfeti }: Props) {
             backdrop: "blur",
             inputData: username,
             setInputValue: setUsername,
-            close: () => restStates,
+            close: restStates,
           }}
           ModalData={{
             titulo: "Elige tu nombre de usuario",

@@ -4,51 +4,51 @@ import { Card, CardHeader, CardBody, CardFooter } from "@heroui/react";
 import { Button } from "@heroui/button";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Confetti from "react-confetti";
+import { useTheme } from "next-themes";
 
 import { title, subtitle } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
 import ComponentLogin from "@/components/ComponentLogin/ComponentLogin";
 import ComponenteRegistro from "@/components/ComponenteRegistro/ComponenteRegistro";
-import Confetti from "react-confetti";
-import { useTheme } from "next-themes";
 
 export default function IndexPage() {
   const [registro, setRegistro] = useState<boolean>(false);
   const [confeti, setConfeti] = useState(false);
   const theme = useTheme();
-  const tema = theme.theme === "dark" || (theme.theme === "system" && theme.systemTheme === "dark")
-    ? "text-white"
-    : "text-gray-600";
+  const tema =
+    theme.theme === "dark" ||
+    (theme.theme === "system" && theme.systemTheme === "dark")
+      ? "text-white"
+      : "text-gray-600";
 
   return (
     <DefaultLayout>
       <main className="w-full h-full">
-        {
-          confeti && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.5 }}
-              style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                pointerEvents: "none",
-                zIndex: 99
-              }}
-            >
-              <Confetti
-                width={window.innerWidth}
-                height={window.innerHeight}
-                recycle={false}
-                numberOfPieces={600}
-              />
-            </motion.div>
-          )
-        }
+        {confeti && (
+          <motion.div
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              pointerEvents: "none",
+              zIndex: 99,
+            }}
+            transition={{ duration: 0.5 }}
+          >
+            <Confetti
+              height={window.innerHeight}
+              numberOfPieces={600}
+              recycle={false}
+              width={window.innerWidth}
+            />
+          </motion.div>
+        )}
         <section className="w-full h-full flex justify-center items-center">
           <motion.div
             animate={{ opacity: 1, y: 0 }}
@@ -100,7 +100,11 @@ export default function IndexPage() {
                   </span>
                 </CardHeader>
                 <CardBody className="flex flex-col justify-center items-center">
-                  {registro ? <ComponenteRegistro functionConfeti={setConfeti} /> : <ComponentLogin />}
+                  {registro ? (
+                    <ComponenteRegistro functionConfeti={setConfeti} />
+                  ) : (
+                    <ComponentLogin />
+                  )}
                 </CardBody>
                 <CardFooter className="w-full flex justify-center">
                   <motion.div

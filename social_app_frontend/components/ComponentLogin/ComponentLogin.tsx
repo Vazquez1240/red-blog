@@ -5,6 +5,7 @@ import { useState } from "react";
 import { LuUser, LuKeyRound } from "react-icons/lu";
 import { CircularProgress } from "@heroui/react";
 import axios from "axios";
+import { useTheme } from "next-themes";
 
 import { FormDataLogin } from "@/interface/interfaces";
 
@@ -15,6 +16,12 @@ export default function ComponentLogin() {
   });
   const [submitForm, setSubmitForm] = useState(false);
   const [errors, setErrors] = useState<Partial<FormDataLogin>>({});
+  const theme = useTheme();
+  const tema =
+    theme.theme === "dark" ||
+    (theme.theme === "system" && theme.systemTheme === "dark")
+      ? "dark"
+      : "light";
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -106,7 +113,7 @@ export default function ComponentLogin() {
             <label htmlFor="email">Correo electrónico</label>
             <Input
               required
-              color="primary"
+              color={`${tema === "dark" ? "default" : "primary"}`}
               errorMessage={errors.email}
               id="email"
               isInvalid={!!errors.email}
@@ -130,7 +137,7 @@ export default function ComponentLogin() {
             <label htmlFor="password">Contraseña</label>
             <Input
               required
-              color="primary"
+              color={`${tema === "dark" ? "default" : "primary"}`}
               errorMessage={errors.password}
               id="password"
               isInvalid={!!errors.password}
@@ -154,7 +161,7 @@ export default function ComponentLogin() {
           >
             <Button
               fullWidth
-              color="primary"
+              color={`${tema === "dark" ? "default" : "primary"}`}
               isDisabled={submitForm}
               type="submit"
             >
