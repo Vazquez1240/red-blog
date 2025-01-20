@@ -6,6 +6,8 @@ import { LuUser, LuKeyRound } from "react-icons/lu";
 import { CircularProgress } from "@heroui/react";
 import axios from "axios";
 import { useTheme } from "next-themes";
+import { UserTable } from "@/types";
+import { userTable } from "@/database.config";
 
 import { FormDataLogin } from "@/interface/interfaces";
 
@@ -66,7 +68,7 @@ export default function ComponentLogin() {
 
       return;
     }
-    const response = await axios.post(
+    const response: UserTable = await axios.post(
       "http://localhost:8000/rest/v1/login/",
       formData,
       {
@@ -78,6 +80,8 @@ export default function ComponentLogin() {
 
     if (response.status === 200) {
       setSubmitForm(false);
+      // userTable.add(response.data);
+      const users = await userTable.toArray();
     }
   };
 

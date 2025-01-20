@@ -69,3 +69,7 @@ export interface RegistroResponse {
   status: number;
   data: any;
 }
+
+/*
+Interface de AuthContext
+ */
