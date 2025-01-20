@@ -73,3 +73,17 @@ export interface RegistroResponse {
 /*
 Interface de AuthContext
  */
+
+export interface userData {
+  access: string;
+  refresh: string;
+  uuid: string;
+  user_id: number;
+  is_superuser: boolean;
+}
+
+export interface AuthContextType {
+  user: userData | null;
+  login: (userData: userData) => void;
+  logout: () => void;
+}

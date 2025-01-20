@@ -6,16 +6,19 @@ import { LuUser, LuKeyRound } from "react-icons/lu";
 import { CircularProgress } from "@heroui/react";
 import axios from "axios";
 import { useTheme } from "next-themes";
+
 import { UserTable } from "@/types";
 import { userTable } from "@/database.config";
-
 import { FormDataLogin } from "@/interface/interfaces";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ComponentLogin() {
   const [formData, setFormData] = useState<FormDataLogin>({
     email: "",
     password: "",
   });
+
+  const { login } = useAuth();
   const [submitForm, setSubmitForm] = useState(false);
   const [errors, setErrors] = useState<Partial<FormDataLogin>>({});
   const theme = useTheme();
@@ -80,8 +83,19 @@ export default function ComponentLogin() {
 
     if (response.status === 200) {
       setSubmitForm(false);
-      // userTable.add(response.data);
-      const users = await userTable.toArray();
+      const existingUser = await userTable.get({
+        user_id: response.data.user_id,
+      });
+
+      if (existingUser) {
+        await userTable.put({
+          ...existingUser,
+          ...response.data,
+        });
+      } else {
+        await userTable.add(response.data);
+      }
+      login(response.data);
     }
   };
 
