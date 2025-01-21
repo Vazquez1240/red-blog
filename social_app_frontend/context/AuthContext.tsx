@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<userData | null>(null);
 
   const login = (userData: userData) => {
-    setUser(userData); // Inicia sesión
+    setUser(userData);
   };
 
   const logout = () => {

@@ -83,18 +83,6 @@ export default function ComponentLogin() {
 
     if (response.status === 200) {
       setSubmitForm(false);
-      const existingUser = await userTable.get({
-        user_id: response.data.user_id,
-      });
-
-      if (existingUser) {
-        await userTable.put({
-          ...existingUser,
-          ...response.data,
-        });
-      } else {
-        await userTable.add(response.data);
-      }
       login(response.data);
     }
   };

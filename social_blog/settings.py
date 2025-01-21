@@ -172,6 +172,11 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
 }
 
+SESSION_COOKIE_SECURE = True  # Solo se enviarán a través de HTTPS
+CSRF_COOKIE_SECURE = True  # Solo se enviarán a través de HTTPS
+CSRF_COOKIE_HTTPONLY = True  # Impide que JavaScript acceda al cookie CSRF
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # La sesión expira al cerrar el navegador
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'base.managers.CustomPagination',
     'DEFAULT_PERMISSION_CLASSES': [
