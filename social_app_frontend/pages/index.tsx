@@ -28,7 +28,7 @@ export default function IndexPage() {
   return (
     <DefaultLayout>
       <main className="w-full h-full">
-        {user !== null ? (
+        {user !== undefined ? (
           <>
             <p>Hola</p>
           </>

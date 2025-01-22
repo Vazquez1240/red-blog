@@ -1,5 +1,6 @@
 import { FaHospitalUser } from "react-icons/fa";
 
+
 /*
 interfaces del componente login
  */
@@ -75,15 +76,16 @@ Interface de AuthContext
  */
 
 export interface userData {
-  access: string;
-  refresh: string;
-  uuid: string;
-  user_id: number;
-  is_superuser: boolean;
+  access: string
+  refresh: string
+  uuid: string
+  user_id: number
+  is_superuser: boolean
 }
 
 export interface AuthContextType {
-  user: userData | null;
-  login: (userData: userData) => void;
-  logout: () => void;
+  user: userData | null
+  login: (userData: { email: string; password: string }) => Promise<void>
+  logout: () => void
+  status: string
 }

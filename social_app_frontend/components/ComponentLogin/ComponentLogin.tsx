@@ -6,9 +6,9 @@ import { LuUser, LuKeyRound } from "react-icons/lu";
 import { CircularProgress } from "@heroui/react";
 import axios from "axios";
 import { useTheme } from "next-themes";
+import { useRouter } from "next/router"
 
 import { UserTable } from "@/types";
-import { userTable } from "@/database.config";
 import { FormDataLogin } from "@/interface/interfaces";
 import { useAuth } from "@/context/AuthContext";
 
@@ -22,6 +22,7 @@ export default function ComponentLogin() {
   const [submitForm, setSubmitForm] = useState(false);
   const [errors, setErrors] = useState<Partial<FormDataLogin>>({});
   const theme = useTheme();
+  const router = useRouter()
   const tema =
     theme.theme === "dark" ||
     (theme.theme === "system" && theme.systemTheme === "dark")
@@ -71,19 +72,13 @@ export default function ComponentLogin() {
 
       return;
     }
-    const response: UserTable = await axios.post(
-      "http://localhost:8000/rest/v1/login/",
-      formData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-    if (response.status === 200) {
-      setSubmitForm(false);
-      login(response.data);
+    try {
+      await login(formData)
+      console.log()
+    } catch (error) {
+      console.error("Login error:", error)
+    } finally {
+      setSubmitForm(false)
     }
   };
 
