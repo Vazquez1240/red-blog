@@ -3,7 +3,7 @@
 export default function SignIn () {
   return (
     <>
-      <p>hola</p>
+      <p>adios</p>
     </>
   )
 }

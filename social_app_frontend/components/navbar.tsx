@@ -25,8 +25,10 @@ import {
   SearchIcon,
   Logo,
 } from "@/components/icons";
+import { useAuth } from "@/context/AuthContext";
 
 export const Navbar = () => {
+  const {logout} = useAuth();
   const searchInput = (
     <Input
       aria-label="Search"
@@ -94,14 +96,12 @@ export const Navbar = () => {
         <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
         <NavbarItem className="hidden md:flex">
           <Button
-            isExternal
-            as={Link}
             className="text-sm font-normal text-default-600 bg-default-100"
-            href={siteConfig.links.sponsor}
+            onPress={() => logout()}
             startContent={<HeartFilledIcon className="text-danger" />}
             variant="flat"
           >
-            Sponsor
+            Logout
           </Button>
         </NavbarItem>
       </NavbarContent>

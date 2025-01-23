@@ -25,12 +25,14 @@ export default function IndexPage() {
       ? "text-white"
       : "text-gray-600";
 
+  console.log(user?.access, 'access')
+
   return (
     <DefaultLayout>
       <main className="w-full h-full">
         {user !== undefined ? (
           <>
-            <p>Hola</p>
+            <p>Pipi en el baño</p>
           </>
         ) : (
           <>

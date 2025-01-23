@@ -1,5 +1,5 @@
 from rest_framework.decorators import action
-
+from .managers import CustomRefreshToken
 from .models import User
 from .serializers import UserSerializer, CustomTokenObtainPairSerializer
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
@@ -101,5 +101,24 @@ class AuthTokenViewset(viewsets.ViewSet):
             return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
         except TokenBackendError as e:
             return Response({'error': 'Token backend error'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+class LogoutViewset(viewsets.ViewSet):
+    permission_classes = [IsAuthenticatedAndObjUserOrIsStaff]
+    parser_classes = [MultiPartParser, FormParser]
+    http_method_names = ['post', 'options', 'head']
+
+    def create(self, request):
+        try:
+            refresh_token = request.data.get('refresh')
+            token = CustomRefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response({'token': 'Delete token'}, status=status.HTTP_205_RESET_CONTENT)
+
+        except TokenError as e:
+            return Response({'error':'El token ya se encuentra en la lista negra'}, status=status.HTTP_400_BAD_REQUEST)
+
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

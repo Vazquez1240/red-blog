@@ -1,6 +1,7 @@
 import React, { createContext, useContext, type ReactNode } from "react"
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useSession, signIn, signOut, getSession } from "next-auth/react"
 import type { AuthContextType, userData } from "@/interface/interfaces"
+import axios from "axios"
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
@@ -19,8 +20,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         callbackUrl: "/"
       })
 
-      console.log('Intentando login con:', userData)
-
       if (result?.error) {
         throw new Error(result.error)
       }
@@ -35,8 +34,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }
 
-  const logout = () => {
-    signOut()
+  const logout = async () => {
+    try {
+      const session = await getSession()
+      if (session?.user?.refresh) {
+        await axios.post(
+          "http://localhost:8000/rest/v1/logout/",
+          { refresh: session.user.refresh },
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+      }
+      await signOut({ redirect: true, callbackUrl: '/' })
+    }catch (error) {
+      console.error("Error en logout:", error)
+    }
   }
 
   const user: userData | null = session?.user as userData | null

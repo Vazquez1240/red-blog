@@ -32,7 +32,6 @@ export const authOptions: NextAuthOptions = {
               },
             },
           )
-          console.log('Response del backend:', response.data)
 
           if (response.status === 200 && response.data) {
             return {

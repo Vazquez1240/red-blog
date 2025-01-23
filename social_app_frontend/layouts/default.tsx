@@ -1,5 +1,6 @@
 import { Link } from "@heroui/link";
 import { useRouter } from "next/router";
+import { useAuth } from "@/context/AuthContext";
 
 import { Head } from "./head";
 
@@ -11,11 +12,12 @@ export default function DefaultLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const {user} = useAuth();
 
   return (
     <div className="relative flex flex-col h-screen">
       <Head />
-      {router.pathname === "/" ? null : <Navbar />}
+      {user !== undefined && (<Navbar />)}
       <main className="container mx-auto max-w-7xl px-6 flex-grow pt-16">
         {children}
       </main>
