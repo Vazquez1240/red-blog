@@ -59,11 +59,11 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         return {
           ...token,
-          accessToken: user.access,
-          refreshToken: user.refresh,
+          access: user.access,
+          refresh: user.refresh,
           uuid: user.uuid,
-          userId: user.user_id,
-          isSuperuser: user.is_superuser,
+          user_id: user.user_id,
+          is_superuser: user.is_superuser,
         }
       }
       return token
@@ -73,8 +73,8 @@ export const authOptions: NextAuthOptions = {
         ...session,
         user: {
           ...session.user,
-          accessToken: token.accessToken,
-          refreshToken: token.refreshToken,
+          access: token.accessToken,
+          refresh: token.refreshToken,
           uuid: token.uuid,
           user_id: token.userId,
           is_superuser: token.isSuperuser,

@@ -21,8 +21,8 @@ import {
 interface Props {
   GenericData: GenericData;
   ModalData: ModalData;
-  ModalSuccess: ModalSuccess;
-  ModalFail: ModalFail;
+  ModalSuccess?: ModalSuccess;
+  ModalFail?: ModalFail;
 }
 
 export default function ComponenteModal({
@@ -54,7 +54,7 @@ export default function ComponenteModal({
   };
 
   const handleButtonClickFail = () => {
-    ModalFail.function_buton();
+    ModalFail?.function_buton();
   };
 
   useEffect(() => {
@@ -125,13 +125,21 @@ export default function ComponenteModal({
                     ) : (
                       <motion.div
                         animate={{ opacity: 1, y: 0 }}
-                        className="p-4 text-center"
-                        exit={{ opacity: 0, y: -20 }}
+                        className="flex flex-col w-full justify-center items-center"
                         initial={{ opacity: 0, y: 20 }}
+                        transition={{ delay: 0.3, duration: 0.5 }}
                       >
-                        <GenericData.icon />
-                        <h5>{ModalData.titulo}</h5>
-                        <p>{ModalData.message}</p>
+                        <GenericData.icon
+                          className={`${ModalData.colorIcon}`}
+                          fontSize={55}/>
+                        <h2 className="text-2xl font-bold mb-2">
+                          {ModalData?.titulo}
+                        </h2>
+                        <p
+                          className={`${tema === "dark" ? "text-white" : "text-gray-500"}`}
+                        >
+                          {ModalData?.message}
+                        </p>
                       </motion.div>
                     )}
                   </ModalBody>
@@ -162,10 +170,14 @@ export default function ComponenteModal({
                       delay: 0.2,
                     }}
                   >
-                    <ModalSuccess.icon
-                      className="text-green-500"
-                      fontSize={55}
-                    />
+                    {
+                      ModalSuccess !== undefined && (
+                        <ModalSuccess.icon
+                          className="text-green-500"
+                          fontSize={55}
+                        />
+                      )
+                    }
                   </motion.div>
                   <motion.div
                     animate={{ opacity: 1, y: 0 }}
@@ -174,12 +186,12 @@ export default function ComponenteModal({
                     transition={{ delay: 0.3, duration: 0.5 }}
                   >
                     <h2 className="text-2xl font-bold mb-2">
-                      {ModalSuccess.titulo}
+                      {ModalSuccess?.titulo}
                     </h2>
                     <p
                       className={`${tema === "dark" ? "text-white" : "text-gray-500"}`}
                     >
-                      {ModalSuccess.message}
+                      {ModalSuccess?.message}
                     </p>
                   </motion.div>
                 </motion.div>
@@ -202,7 +214,11 @@ export default function ComponenteModal({
                     }}
                     className={"w-full flex justify-center items-center"}
                   >
-                    <ModalFail.icon className="text-red-500" fontSize={55} />
+                    {
+                      ModalFail !== undefined && (
+                        <ModalFail.icon className="text-red-500" fontSize={55} />
+                      )
+                    }
                   </motion.div>
                   <motion.div
                     animate={{ opacity: 1, y: 0 }}
@@ -211,12 +227,12 @@ export default function ComponenteModal({
                     transition={{ delay: 0.3, duration: 0.5 }}
                   >
                     <h2 className="text-2xl font-bold mb-2">
-                      {ModalFail.titulo}
+                      {ModalFail?.titulo}
                     </h2>
                     <p
                       className={`${tema === "dark" ? "text-white" : "text-gray-500"}`}
                     >
-                      {ModalFail.message}
+                      {ModalFail?.message}
                     </p>
                   </motion.div>
                   <motion.div

@@ -27,7 +27,7 @@ export interface GenericDataBase {
   isSuccesOrFail: boolean;
   modal_verify: boolean;
   isDismissable?: false;
-  backdrop: "blur";
+  backdrop?: "blur";
   close: (value: boolean) => void;
 }
 export interface GenericDataInput extends GenericDataBase {
@@ -45,6 +45,7 @@ export interface ModalData {
   titulo: string;
   message: string;
   textBtn: string;
+  colorIcon?: string;
   function_buton: () => void;
 }
 
@@ -88,4 +89,20 @@ export interface AuthContextType {
   login: (userData: { email: string; password: string }) => Promise<void>
   logout: () => void
   status: string
+}
+
+
+/*
+
+Interface Feed
+ */
+
+export interface Posts {
+  title: string;
+  content: string;
+  author_uuid: string;
+  author_username: string;
+  author_email: string;
+  likes: number;
+  comments: string;
 }
