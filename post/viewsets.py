@@ -2,7 +2,7 @@ from rest_framework import viewsets, status
 from .models import Post
 from .serializers import PostSerializer
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import JSONParser
+from django.core.cache import cache
 from users.models import User
 from rest_framework.response import Response
 
@@ -13,13 +13,11 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        if user.is_superuser:
-            return Post.objects.all()
-        elif user.is_staff:
-            return Post.objects.all()
-        else:
-            return Post.objects.filter(author_uuid=user.uuid)
+        cached_data = cache.get('posts')
+        if cached_data:
+            return cached_data
+        cache.set('posts', Post.objects.all().order_by('-created_at'), timeout=60 * 5)
+        return Post.objects.all().order_by('-created_at')
 
     def retrieve(self, request, *args, **kwargs):
         """Deshabilitar la obtención de un detalle específico."""

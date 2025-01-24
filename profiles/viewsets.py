@@ -6,7 +6,7 @@ from .models import Profile, Follow
 from post.models import Post
 from .serializers import ProfileSerializer, FollowSerializer
 from post.serializers import PostSerializer
-from rest_framework.permissions import IsAuthenticated
+from django.core.cache import cache
 
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
@@ -17,26 +17,33 @@ class ProfilesViewset(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
     parser_classes = (JSONParser,)
 
-    class ProfilesViewset(viewsets.ModelViewSet):
-        queryset = Profile.objects.all()
-        serializer_class = ProfileSerializer
-        parser_classes = (JSONParser,)
-
-        def list(self, request, *args, **kwargs):
-            if self.request.user.is_superuser:
-                return Profile.objects.all()
-            elif self.request.user.is_staff:
-                return Profile.objects.all()
-            else:
-                profile = Profile.objects.filter(user=self.request.user).first()
-                posts = Post.objects.filter(author_uuid=profile.user.uuid)
-                serializer = PostSerializer(posts, many=True)
-                serializer_profile = ProfileSerializer(profile)
-                return Response({
-                    "data_profile": serializer_profile.data,
-                    "data_posts": serializer.data
-                })
-
+    def list(self, request, *args, **kwargs):
+        if self.request.user.is_superuser:
+            profiles = Profile.objects.all()
+            serializer = ProfileSerializer(profiles, many=True)
+            return Response(serializer.data)
+        elif self.request.user.is_staff:
+            profiles = Profile.objects.all()
+            serializer = ProfileSerializer(profiles, many=True)
+            return Response(serializer.data)
+        else:
+            cached_data = cache.get('profiles')
+            if cached_data:
+                return Response(cached_data)
+            print('no entre a cache')
+            profile = Profile.objects.filter(user=self.request.user).first()
+            posts = Post.objects.filter(author_uuid=profile.user.uuid)
+            serializer = PostSerializer(posts, many=True)
+            serializer_profile = ProfileSerializer(profile)
+            data = {
+                "data_profile": serializer_profile.data,
+                "data_posts": serializer.data
+            }
+            cache.set('profiles', data, timeout=60 * 5)
+            return Response({
+                "data_profile": serializer_profile.data,
+                "data_posts": serializer.data
+            })
 class ProfileViewset(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = PostSerializer
