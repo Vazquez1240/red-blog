@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django_mongoengine',
     'rest_framework',
     'django_extensions',
+    'rest_framework_simplejwt.token_blacklist',
     'drf_spectacular',
     'corsheaders',
 

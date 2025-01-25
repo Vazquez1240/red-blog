@@ -111,6 +111,7 @@ class LogoutViewset(viewsets.ViewSet):
 
     def create(self, request):
         try:
+
             refresh_token = request.data.get('refresh')
             token = CustomRefreshToken(refresh_token)
             token.blacklist()
@@ -121,4 +122,5 @@ class LogoutViewset(viewsets.ViewSet):
             return Response({'error':'El token ya se encuentra en la lista negra'}, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
+            print('entrando a exception')
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

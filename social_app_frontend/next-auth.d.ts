@@ -3,11 +3,11 @@ import 'next-auth';
 declare module 'next-auth' {
   interface Session {
     user: {
-      access?: string;
-      refresh?: string;
+      accessToken?: string;
+      refreshToken?: string;
       uuid?: string;
-      user_id?: number;
-      is_superuser?: boolean;
+      userId?: number;
+      isSuperuser?: boolean;
       email?: string;
     }
   }

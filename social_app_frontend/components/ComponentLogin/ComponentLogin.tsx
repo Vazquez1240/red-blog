@@ -74,7 +74,6 @@ export default function ComponentLogin() {
     }
     try {
       await login(formData)
-      console.log()
     } catch (error) {
       console.error("Login error:", error)
     } finally {

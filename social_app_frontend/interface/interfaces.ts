@@ -77,11 +77,11 @@ Interface de AuthContext
  */
 
 export interface userData {
-  access: string
-  refresh: string
+  accessToken: string
+  refreshToken: string
   uuid: string
-  user_id: number
-  is_superuser: boolean
+  userId: number
+  isSuperuser: boolean
 }
 
 export interface AuthContextType {
@@ -97,12 +97,30 @@ export interface AuthContextType {
 Interface Feed
  */
 
-export interface Posts {
+export interface Comments {
+  content: string;
+  author_uuid: string;
+  author_username: string;
+  created_at: string;
+}
+
+export interface ResultsPosts {
   title: string;
   content: string;
   author_uuid: string;
   author_username: string;
   author_email: string;
   likes: number;
-  comments: string;
+  comments: Comments[]
+}
+export interface Post {
+  current_page: number;
+  results: ResultsPosts[]
+  total_items: number;
+  total_pages: number;
+}
+
+export interface Posts {
+  status: number;
+  data: Post[]
 }

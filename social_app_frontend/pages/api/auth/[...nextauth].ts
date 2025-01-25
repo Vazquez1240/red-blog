@@ -14,7 +14,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log(credentials, 'credentials')
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email y contraseña son requeridos")
         }
@@ -59,11 +58,11 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         return {
           ...token,
-          access: user.access,
-          refresh: user.refresh,
+          accessToken: user.access,
+          refreshToken: user.refresh,
           uuid: user.uuid,
-          user_id: user.user_id,
-          is_superuser: user.is_superuser,
+          userId: user.user_id,
+          isSuperuser: user.is_superuser,
         }
       }
       return token
@@ -73,8 +72,8 @@ export const authOptions: NextAuthOptions = {
         ...session,
         user: {
           ...session.user,
-          access: token.accessToken,
-          refresh: token.refreshToken,
+          accessToken: token.accessToken,
+          refreshToken: token.refreshToken,
           uuid: token.uuid,
           user_id: token.userId,
           is_superuser: token.isSuperuser,

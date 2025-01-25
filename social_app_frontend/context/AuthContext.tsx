@@ -41,13 +41,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const session = await getSession();
 
-      if (session?.user?.refresh) {
-        await axios.post(
+
+      if (session?.user?.refreshToken) {
+        const response = await axios.post(
           "http://localhost:8000/rest/v1/logout/",
-          { refresh: session.user.refresh },
+          { refresh: session.user?.refreshToken },
           {
             headers: {
-              "Content-Type": "application/json",
+              "Authorization": `Bearer ${session?.user?.accessToken}`,
+              "Content-Type": "multipart/form-data",
             },
           },
         );
