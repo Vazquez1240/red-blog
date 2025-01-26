@@ -3,9 +3,10 @@ import type { AuthContextType, userData } from "@/interface/interfaces";
 import React, { createContext, useContext, type ReactNode } from "react";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import axios from "axios";
-import ComponenteModal from "@/components/Genericos/ComponenteModal";
 import { LuCircleX } from "react-icons/lu";
 import { useState } from "react";
+
+import ComponenteModal from "@/components/Genericos/ComponenteModal";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -15,8 +16,8 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { data: session, status } = useSession();
-  const [ openModal, setOpenModal ] = useState(false)
-  const [ messageModal, setMessageModal ] = useState("")
+  const [openModal, setOpenModal] = useState(false);
+  const [messageModal, setMessageModal] = useState("");
 
   const login = async (userData: { email: string; password: string }) => {
     try {
@@ -27,10 +28,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       });
 
       if (result?.error) {
-        setOpenModal(true)
-        setMessageModal("Credenciales incorrectas")
+        setOpenModal(true);
+        setMessageModal("Credenciales incorrectas");
       }
-
     } catch (error) {
       console.error("Error en login:", error);
       throw error;
@@ -41,14 +41,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const session = await getSession();
 
-
       if (session?.user?.refreshToken) {
         const response = await axios.post(
           "http://localhost:8000/rest/v1/logout/",
           { refresh: session.user?.refreshToken },
           {
             headers: {
-              "Authorization": `Bearer ${session?.user?.accessToken}`,
+              Authorization: `Bearer ${session?.user?.accessToken}`,
               "Content-Type": "multipart/form-data",
             },
           },
@@ -66,27 +65,25 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     <AuthContext.Provider value={{ user, login, logout, status }}>
       {children}
 
-      {
-        openModal && (
-          <ComponenteModal
-            GenericData={{
-              status: true,
-              type_modal: "text",
-              modal_verify: false,
-              isSuccesOrFail: false,
-              icon: LuCircleX,
-              close: () => setOpenModal(false),
-            }}
-            ModalData={{
-              titulo: "Error",
-              message: messageModal,
-              textBtn: "Entendido",
-              colorIcon: "text-red-500",
-              function_buton: () => setOpenModal(false),
-            }}
-          />
-        )
-      }
+      {openModal && (
+        <ComponenteModal
+          GenericData={{
+            status: true,
+            type_modal: "text",
+            modal_verify: false,
+            isSuccesOrFail: false,
+            icon: LuCircleX,
+            close: () => setOpenModal(false),
+          }}
+          ModalData={{
+            titulo: "Error",
+            message: messageModal,
+            textBtn: "Entendido",
+            colorIcon: "text-red-500",
+            function_buton: () => setOpenModal(false),
+          }}
+        />
+      )}
     </AuthContext.Provider>
   );
 };

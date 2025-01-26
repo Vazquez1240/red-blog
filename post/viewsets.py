@@ -1,4 +1,6 @@
 from rest_framework import viewsets, status
+from social_blog.settings import BASE_URL
+from profiles.models import Profile
 from .models import Post
 from .serializers import PostSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -25,8 +27,10 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request, *args, **kwargs):
+
         user = User.objects.get(uuid=request.data['author_uuid'])
         data = request.data
+        print(user.username, 'user.username')
 
         data['author_username'] = user.username
         data['author_email'] = user.email
@@ -34,5 +38,19 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer = PostSerializer(data=data)
         if serializer.is_valid():
             post = serializer.create(data)
-            return Response({'status': '201'}, status=status.HTTP_201_CREATED)
+            photo_author = Profile.objects.filter(user__uuid=post.author_uuid).first()
+            if photo_author.avatar:
+                photo_url =  BASE_URL+photo_author.avatar.url
+            else:
+                photo_url = None
+
+            return Response({
+                "content": post.content,
+                "author_uuid": post.author_uuid,
+                "author_username": post.author_username,
+                "author_email": post.author_email,
+                "likes": post.likes,
+                "comments": post.comments,
+                "author_photo": photo_url,
+            }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

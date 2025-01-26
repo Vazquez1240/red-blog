@@ -1,6 +1,6 @@
-import 'next-auth';
+import "next-auth";
 
-declare module 'next-auth' {
+declare module "next-auth" {
   interface Session {
     user: {
       accessToken?: string;
@@ -9,7 +9,7 @@ declare module 'next-auth' {
       userId?: number;
       isSuperuser?: boolean;
       email?: string;
-    }
+    };
   }
 
   interface User {

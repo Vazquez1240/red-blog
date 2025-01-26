@@ -10,27 +10,23 @@ import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
 } from "@heroui/dropdown";
 import { Kbd } from "@heroui/kbd";
 import { Link } from "@heroui/link";
 import { Input } from "@heroui/input";
 import NextLink from "next/link";
-
-import { siteConfig } from "@/config/site";
 import { Button } from "@heroui/button";
 import { LuMenu } from "react-icons/lu";
 import { LuLogOut } from "react-icons/lu";
 import { Avatar } from "@heroui/react";
-import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  SearchIcon,
-  Logo,
-} from "@/components/icons";
+
+import { siteConfig } from "@/config/site";
+import { SearchIcon, Logo } from "@/components/icons";
 import { useAuth } from "@/context/AuthContext";
 
 export const Navbar = () => {
-  const {logout} = useAuth();
+  const { logout } = useAuth();
   const searchInput = (
     <Input
       aria-label="Search"
@@ -71,13 +67,33 @@ export const Navbar = () => {
         <NavbarItem className="hidden md:flex">
           <Dropdown className={"w-auto"}>
             <DropdownTrigger>
-              <Button variant={"light"}><LuMenu/></Button>
+              <Button variant={"light"}>
+                <LuMenu />
+              </Button>
             </DropdownTrigger>
-            <DropdownMenu aria-label="Action event example" onAction={(key) => {
-              key === 'close_session' ? logout() : null
-            }}>
-              <DropdownItem key="new" startContent={<Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" size={"sm"}/>}>Mi perfil</DropdownItem>
-              <DropdownItem key="close_session" startContent={<LuLogOut size={24}/>}>Cerrar Sesion</DropdownItem>
+            <DropdownMenu
+              aria-label="Action event example"
+              onAction={(key) => {
+                key === "close_session" ? logout() : null;
+              }}
+            >
+              <DropdownItem
+                key="new"
+                startContent={
+                  <Avatar
+                    size={"sm"}
+                    src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+                  />
+                }
+              >
+                Mi perfil
+              </DropdownItem>
+              <DropdownItem
+                key="close_session"
+                startContent={<LuLogOut size={24} />}
+              >
+                Cerrar Sesion
+              </DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>

@@ -14,6 +14,7 @@ from pathlib import Path
 import dj_database_url
 from datetime import timedelta
 import mongoengine
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,6 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-%_=6jw8)&ouo6b)c&&wommf7v3zm)ul2&)2vzsx-ut4(25@gat'
+
+BASE_URL = "http://localhost:8000"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -98,6 +101,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'social_blog.wsgi.application'
 
 
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 MONGODB_DATABASES = {
@@ -170,8 +180,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Tiempo de vida del token de acceso
-    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=60),  # Tiempo de vida del token de refresco
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),  # Tiempo de vida del token de acceso
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=60),  # Tiempo de vida del token de refresco
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': False,

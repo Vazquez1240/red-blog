@@ -1,6 +1,5 @@
 import { FaHospitalUser } from "react-icons/fa";
 
-
 /*
 interfaces del componente login
  */
@@ -77,20 +76,19 @@ Interface de AuthContext
  */
 
 export interface userData {
-  accessToken: string
-  refreshToken: string
-  uuid: string
-  userId: number
-  isSuperuser: boolean
+  accessToken: string;
+  refreshToken: string;
+  uuid: string;
+  userId: number;
+  isSuperuser: boolean;
 }
 
 export interface AuthContextType {
-  user: userData | null
-  login: (userData: { email: string; password: string }) => Promise<void>
-  logout: () => void
-  status: string
+  user: userData | null;
+  login: (userData: { email: string; password: string }) => Promise<void>;
+  logout: () => void;
+  status: string;
 }
-
 
 /*
 
@@ -111,16 +109,17 @@ export interface ResultsPosts {
   author_username: string;
   author_email: string;
   likes: number;
-  comments: Comments[]
+  comments: Comments[];
+  author_photo: string;
 }
 export interface Post {
   current_page: number;
-  results: ResultsPosts[]
+  results: ResultsPosts[];
   total_items: number;
   total_pages: number;
 }
 
 export interface Posts {
   status: number;
-  data: Post[]
+  data: Post[];
 }
