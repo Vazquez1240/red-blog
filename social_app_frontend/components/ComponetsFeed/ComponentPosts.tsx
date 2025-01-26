@@ -1,9 +1,14 @@
 import { Card, CardBody, CardHeader, CardFooter } from "@heroui/card";
 import { Avatar } from "@heroui/avatar";
-import { Button, Input } from "@heroui/react";
+import { ResultsPosts } from "@/interface/interfaces";
 
 
-export default function ComponentPosts() {
+interface Props {
+  posts: ResultsPosts[];
+}
+
+
+export default function ComponentPosts({posts}:Props) {
   return (
     <>
       <Card className={"flex flex-row w-full sm:w-[65%] md:w-[65%] lg:w-[65%] xl:w-[65%]"}>
@@ -21,15 +26,6 @@ export default function ComponentPosts() {
         </CardHeader>
         <CardBody className={"flex flex-row gap-3 justify-center items-center"}>
 
-        <Input
-            type="text"
-            isRequired
-            labelPlacement="outside"
-            variant="bordered"
-            placeholder="¿Qué estás pensando?"
-            onKeyDown={(e) => console.log('hola')}
-          />
-          <Button color={"primary"}> Publicar </Button>
         </CardBody>
       </Card>
     </>
