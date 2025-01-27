@@ -9,6 +9,7 @@ declare module "next-auth" {
       userId?: number;
       isSuperuser?: boolean;
       email?: string;
+      user_photo?: string;
     };
   }
 
@@ -19,5 +20,6 @@ declare module "next-auth" {
     user_id: number;
     is_superuser: boolean;
     email: string;
+    user_photo: string;
   }
 }

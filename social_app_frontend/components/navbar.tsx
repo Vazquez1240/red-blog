@@ -26,7 +26,7 @@ import { SearchIcon, Logo } from "@/components/icons";
 import { useAuth } from "@/context/AuthContext";
 
 export const Navbar = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const searchInput = (
     <Input
       aria-label="Search"
@@ -82,7 +82,11 @@ export const Navbar = () => {
                 startContent={
                   <Avatar
                     size={"sm"}
-                    src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+                    src={
+                      user?.user_photo === null
+                        ? "https://digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png"
+                        : user?.user_photo
+                    }
                   />
                 }
               >

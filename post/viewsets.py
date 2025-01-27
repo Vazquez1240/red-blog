@@ -7,18 +7,20 @@ from rest_framework.permissions import IsAuthenticated
 from django.core.cache import cache
 from users.models import User
 from rest_framework.response import Response
+from rest_framework.decorators import action
+from mongoengine.errors import DoesNotExist
 
 class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
-    http_method_names = ['get', 'post']
+    http_method_names = ['get', 'post', 'patch']
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         cached_data = cache.get('posts')
         if cached_data:
             return cached_data
-        cache.set('posts', Post.objects.all().order_by('-created_at'), timeout=60 * 5)
+        cache.set('posts', Post.objects.all().order_by('-created_at'))
         return Post.objects.all().order_by('-created_at')
 
     def retrieve(self, request, *args, **kwargs):
@@ -44,7 +46,9 @@ class PostViewSet(viewsets.ModelViewSet):
             else:
                 photo_url = None
 
+
             return Response({
+                "id": post.id,
                 "content": post.content,
                 "author_uuid": post.author_uuid,
                 "author_username": post.author_username,
@@ -54,3 +58,31 @@ class PostViewSet(viewsets.ModelViewSet):
                 "author_photo": photo_url,
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['patch'], detail=False, url_path='like-post', url_name='like-post')
+    def like_post(self, request):
+        try:
+            post = Post.objects.get(id=self.request.data.get('id_post'))
+        except DoesNotExist:
+            return Response({'detail': 'El post no existe'}, status=status.HTTP_404_NOT_FOUND)
+
+        user_uuid = request.user.uuid
+        estado = None
+        if post.likes is None:
+            post.likes = []
+
+        user_uuid = request.user.uuid
+
+        if user_uuid in post.likes:
+            estado = "remove"
+            post.likes.remove(user_uuid)
+        else:
+            estado = "add"
+            post.likes.append(user_uuid)
+
+        post.save()
+
+        return Response({
+            'likes': len(post.likes),
+            'estado': estado
+        }, status=status.HTTP_200_OK)

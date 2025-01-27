@@ -41,6 +41,7 @@ export const authOptions: NextAuthOptions = {
               uuid: response.data.uuid,
               user_id: response.data.user_id,
               is_superuser: response.data.is_superuser,
+              user_photo: response.data.user_photo,
             }
           }
           throw new Error("Error de autenticación")
@@ -63,6 +64,7 @@ export const authOptions: NextAuthOptions = {
           uuid: user.uuid,
           userId: user.user_id,
           isSuperuser: user.is_superuser,
+          user_photo: user.user_photo,
         }
       }
       return token
@@ -77,6 +79,7 @@ export const authOptions: NextAuthOptions = {
           uuid: token.uuid,
           user_id: token.userId,
           is_superuser: token.isSuperuser,
+          user_photo: token.user_photo,
         },
       }
     },

@@ -1,6 +1,7 @@
 from mongoengine import( Document, StringField, DateTimeField, UUIDField, EmbeddedDocument, IntField,
                          EmbeddedDocumentField, ListField)
 from datetime import datetime
+import uuid
 
 class Comment(EmbeddedDocument):
     content = StringField(max_length=450, required=True)
@@ -9,6 +10,8 @@ class Comment(EmbeddedDocument):
     created_at = DateTimeField(default=datetime.utcnow)
 
 class Post(Document):
+    id = UUIDField(primary_key=True, default=uuid.uuid4)
+
     title = StringField(max_length=200, required=True)
     content = StringField(required=True)
     author_uuid = UUIDField(required=True)
@@ -16,7 +19,7 @@ class Post(Document):
     author_username = StringField(max_length=150)
     author_email = StringField()
 
-    likes = IntField(default=0)
+    likes = ListField(UUIDField())
     comments = ListField(EmbeddedDocumentField(Comment))
 
     created_at = DateTimeField(default=datetime.utcnow)

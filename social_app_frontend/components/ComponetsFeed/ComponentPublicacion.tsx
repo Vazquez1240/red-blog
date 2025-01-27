@@ -4,6 +4,7 @@ import { Button, Input } from "@heroui/react";
 import { useState } from "react";
 import axios from "axios";
 import { getSession } from "next-auth/react";
+import { useAuth } from "@/context/AuthContext";
 
 interface Props {
   setNewPosts: (posts: any) => void;
@@ -12,7 +13,12 @@ interface Props {
 export default function ComponentPublicacion({ setNewPosts }: Props) {
   const [messagePublicacion, setMessagePublicacion] = useState("");
 
-  const sendPsts = async () => {
+  const { user } = useAuth()
+
+  console.log(user?.user_photo)
+
+  const sendPosts = async (e: React.FormEvent) => {
+    e.preventDefault()
     const session = await getSession();
 
     if (session?.user?.uuid) {
@@ -46,30 +52,38 @@ export default function ComponentPublicacion({ setNewPosts }: Props) {
 
   return (
     <>
-      <Card
-        className={
-          "flex flex-row w-full sm:w-[65%] md:w-[65%] lg:w-[65%] xl:w-[65%]"
-        }
-      >
-        <CardBody className={"flex flex-row gap-3 justify-center items-center"}>
-          <div>
-            <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
-          </div>
-          <Input
-            isRequired
-            labelPlacement="outside"
-            placeholder="¿Qué estás pensando?"
-            type="text"
-            value={messagePublicacion}
-            variant="bordered"
-            onChange={(e) => setMessagePublicacion(e.target.value)}
-            onKeyDown={(e) => console.log("hola")}
-          />
-          <Button color={"primary"} onPress={sendPsts}>
-            Publicar
-          </Button>
-        </CardBody>
-      </Card>
+
+      <form onSubmit={sendPosts}>
+        <Card
+          className={
+            "flex flex-row w-full sm:w-[65%] md:w-[65%] lg:w-[65%] xl:w-[65%]"
+          }
+        >
+          <CardBody className={"flex flex-row gap-3 justify-center items-center"}>
+            <div>
+              <Avatar src={
+                user?.user_photo === null
+                  ? "https://digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png"
+                  : user?.user_photo
+              } />
+            </div>
+            <Input
+              isRequired
+              labelPlacement="outside"
+              placeholder="¿Qué estás pensando?"
+              type="text"
+              color={"primary"}
+              value={messagePublicacion}
+              variant="bordered"
+              onChange={(e) => setMessagePublicacion(e.target.value)}
+              onKeyDown={(e) => console.log("hola")}
+            />
+            <Button color={"primary"} type="submit">
+              Publicar
+            </Button>
+          </CardBody>
+        </Card>
+      </form>
     </>
   );
 }

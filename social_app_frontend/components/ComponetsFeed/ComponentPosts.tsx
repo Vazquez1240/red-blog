@@ -1,21 +1,52 @@
 import { Card, CardHeader, CardBody, CardFooter, Button } from "@heroui/react";
 import { Avatar } from "@heroui/avatar";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
+import { LuMessageCircle, LuShare2 } from "react-icons/lu";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
+import { useAuth } from "@/context/AuthContext";
 
 import { ResultsPosts } from "@/interface/interfaces";
+import { useEffect } from "react";
+
 export default function ComponentPosts({
-  title,
-  author_username,
-  author_photo,
-  author_uuid,
-  author_email,
-  content,
-  likes,
-  comments,
-}: ResultsPosts) {
+                                         title,
+                                         author_username,
+                                         author_photo,
+                                         author_uuid,
+                                         author_email,
+                                         content,
+                                         likes,
+                                         comments,
+                                         id
+                                       }: ResultsPosts) {
   const [liked, setLiked] = useState(false);
+  const { user } = useAuth();
+  const [likesCount, setLikesCount] = useState(likes.length);
+  
+  useEffect(() => {
+    setLikesCount(likes.length);
+    likes.includes(user?.uuid as string) ? setLiked(true) : setLiked(false);
+  }, [likes, user]);
+
+  const likePost = async () => {
+    const response = await axios.patch('http://localhost:8000/rest/v1/posts/like-post/', {
+      id_post: id
+    }, {
+      headers: {
+        Authorization: "Bearer " + user?.accessToken,
+      },
+    });
+
+    if (response.data?.estado === "remove") {
+      setLiked(false);
+      setLikesCount(prev => prev - 1);
+    } else {
+      setLiked(true);
+      setLikesCount(prev => prev + 1);
+    }
+  };
 
   return (
     <>
@@ -44,9 +75,9 @@ export default function ComponentPosts({
           <p className={"text-black"}>{content}</p>
         </CardBody>
         <CardFooter>
-          <div>
+          <div className={"w-full flex flex-row justify-between"}>
             <div>
-              <Button variant={"light"} onPress={() => setLiked(!liked)}>
+              <Button variant={"light"} onPress={likePost}>
                 {liked ? (
                   <motion.div
                     key="filledHeart"
@@ -76,11 +107,21 @@ export default function ComponentPosts({
                     <FaRegHeart className="h-4 w-4 cursor-pointer" />
                   </motion.div>
                 )}
-                {likes} Me gusta
+                {likesCount} Me gusta
               </Button>
             </div>
-            <div />
-            <div />
+            <div>
+              <Button variant={"light"}>
+                <LuMessageCircle />
+                {comments.length} Comentarios
+              </Button>
+            </div>
+            <div>
+              <Button variant={"light"}>
+                <LuShare2 />
+                {comments.length} Compartir
+              </Button>
+            </div>
           </div>
         </CardFooter>
       </Card>

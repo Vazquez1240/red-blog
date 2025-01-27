@@ -81,6 +81,7 @@ export interface userData {
   uuid: string;
   userId: number;
   isSuperuser: boolean;
+  user_photo: string;
 }
 
 export interface AuthContextType {
@@ -108,9 +109,10 @@ export interface ResultsPosts {
   author_uuid: string;
   author_username: string;
   author_email: string;
-  likes: number;
+  likes: string[];
   comments: Comments[];
   author_photo: string;
+  id:string;
 }
 export interface Post {
   current_page: number;

@@ -88,7 +88,8 @@ class AuthTokenViewset(viewsets.ViewSet):
                     'access': data['access'],
                     'user_id': decoded_access['user_id'],
                     'is_superuser': decoded_access['is_superuser'],
-                    'uuid': decoded_access['uuid']
+                    'uuid': decoded_access['uuid'],
+                    'user_photo': decoded_access['user_photo'],
                 }, status=status.HTTP_200_OK)
             else:
                 if 'No active account found with the given credentials' in data['detail']:

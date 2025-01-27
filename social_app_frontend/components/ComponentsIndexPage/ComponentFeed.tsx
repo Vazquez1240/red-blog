@@ -2,6 +2,7 @@ import { useMount } from "@reactuses/core";
 import { useState } from "react";
 import axios from "axios";
 import { signOut } from "next-auth/react";
+import { motion } from "framer-motion";
 
 import { useAuth } from "@/context/AuthContext";
 import ComponentPublicacion from "@/components/ComponetsFeed/ComponentPublicacion";
@@ -25,6 +26,7 @@ export default function ComponentFeed() {
         },
       );
 
+
       if (response.status === 200) {
         const fetchedPosts = response.data.results;
 
@@ -43,20 +45,29 @@ export default function ComponentFeed() {
       <section className={"flex flex-col gap-8"}>
         {[...newPosts, ...posts].map((post, index) => {
           return (
-            <ComponentPosts
+            <motion.div
               key={index}
-              author_email={post.author_email}
-              author_photo={post.author_photo}
-              author_username={post.author_username}
-              author_uuid={post.author_uuid}
-              comments={post.comments}
-              content={post.content}
-              likes={post.likes}
-              title={post.title}
-            />
-          );
-        })}
-      </section>
-    </main>
-  );
-}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 * index, duration: 0.5 }}
+            >
+              <ComponentPosts
+                key={index}
+                author_email={post.author_email}
+                id={post.id}
+                author_photo={post.author_photo}
+                author_username={post.author_username}
+                author_uuid={post.author_uuid}
+                comments={post.comments}
+                content={post.content}
+                likes={post.likes}
+                title={post.title}
+              />
+            </motion.div>
+              );
+              })}
+            </section>
+        </main>
+        )
+          ;
+        }
