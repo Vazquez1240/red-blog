@@ -3,48 +3,52 @@ import { Avatar } from "@heroui/avatar";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import { LuMessageCircle, LuShare2 } from "react-icons/lu";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import axios from "axios";
-import { useAuth } from "@/context/AuthContext";
-
-import { ResultsPosts } from "@/interface/interfaces";
 import { useEffect } from "react";
 
+import { useAuth } from "@/context/AuthContext";
+import { ResultsPosts } from "@/interface/interfaces";
+
 export default function ComponentPosts({
-                                         title,
-                                         author_username,
-                                         author_photo,
-                                         author_uuid,
-                                         author_email,
-                                         content,
-                                         likes,
-                                         comments,
-                                         id
-                                       }: ResultsPosts) {
+  title,
+  author_username,
+  author_photo,
+  author_uuid,
+  author_email,
+  content,
+  likes,
+  comments,
+  id,
+}: ResultsPosts) {
   const [liked, setLiked] = useState(false);
   const { user } = useAuth();
   const [likesCount, setLikesCount] = useState(likes.length);
-  
+
   useEffect(() => {
     setLikesCount(likes.length);
     likes.includes(user?.uuid as string) ? setLiked(true) : setLiked(false);
   }, [likes, user]);
 
   const likePost = async () => {
-    const response = await axios.patch('http://localhost:8000/rest/v1/posts/like-post/', {
-      id_post: id
-    }, {
-      headers: {
-        Authorization: "Bearer " + user?.accessToken,
+    const response = await axios.patch(
+      "http://localhost:8000/rest/v1/posts/like-post/",
+      {
+        id_post: id,
       },
-    });
+      {
+        headers: {
+          Authorization: "Bearer " + user?.accessToken,
+        },
+      },
+    );
 
     if (response.data?.estado === "remove") {
       setLiked(false);
-      setLikesCount(prev => prev - 1);
+      setLikesCount((prev) => prev - 1);
     } else {
       setLiked(true);
-      setLikesCount(prev => prev + 1);
+      setLikesCount((prev) => prev + 1);
     }
   };
 

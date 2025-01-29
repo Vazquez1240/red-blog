@@ -1,4 +1,6 @@
 from rest_framework import viewsets, status
+from yaml import serialize
+
 from social_blog.settings import BASE_URL
 from profiles.models import Profile
 from .models import Post
@@ -20,8 +22,10 @@ class PostViewSet(viewsets.ModelViewSet):
         cached_data = cache.get('posts')
         if cached_data:
             return cached_data
-        cache.set('posts', Post.objects.all().order_by('-created_at'))
-        return Post.objects.all().order_by('-created_at')
+        queryset = Post.objects.all().order_by('-created_at')
+        serialized_data = PostSerializer(queryset, many=True).data
+        cache.set('posts', serialized_data)
+        return queryset
 
     def retrieve(self, request, *args, **kwargs):
         """Deshabilitar la obtención de un detalle específico."""
