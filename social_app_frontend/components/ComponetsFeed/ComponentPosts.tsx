@@ -1,11 +1,11 @@
 import { Card, CardHeader, CardBody, CardFooter, Button } from "@heroui/react";
 import { Avatar } from "@heroui/avatar";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
-import { LuMessageCircle, LuShare2 } from "react-icons/lu";
+import { LuMessageCircle, LuShare2, LuChevronUp, LuChevronDown } from "react-icons/lu";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { useAuth } from "@/context/AuthContext";
 import { ResultsPosts } from "@/interface/interfaces";
@@ -22,13 +22,30 @@ export default function ComponentPosts({
   id,
 }: ResultsPosts) {
   const [liked, setLiked] = useState(false);
+  const [ isExpanded, setIsExpanded ] = useState(false);
   const { user } = useAuth();
   const [likesCount, setLikesCount] = useState(likes.length);
+  const contentRef = useRef<HTMLParagraphElement>(null)
+  const [shouldTruncate, setShouldTruncate] = useState(false)
+  const toggleExpand = () => setIsExpanded(!isExpanded)
 
   useEffect(() => {
     setLikesCount(likes.length);
     likes.includes(user?.uuid as string) ? setLiked(true) : setLiked(false);
   }, [likes, user]);
+
+  useEffect(() => {
+    const checkTruncate = () => {
+      if (contentRef.current) {
+        const { scrollHeight, clientHeight } = contentRef.current
+        setShouldTruncate(scrollHeight > clientHeight)
+      }
+    }
+
+    checkTruncate()
+    window.addEventListener("resize", checkTruncate)
+    return () => window.removeEventListener("resize", checkTruncate)
+  }, [content])
 
   const likePost = async () => {
     const response = await axios.patch(
@@ -76,7 +93,50 @@ export default function ComponentPosts({
           </div>
         </CardHeader>
         <CardBody>
-          <p className={"text-black"}>{content}</p>
+          <motion.div
+            animate={{ height: isExpanded || !shouldTruncate ? "auto" : "3.4em" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="relative overflow-hidden"
+          >
+            <p ref={contentRef} className={`${isExpanded ? "" : "line-clamp-2"}`}>
+              {content}
+            </p>
+            {shouldTruncate && !isExpanded && (
+              <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white to-transparent" />
+            )}
+          </motion.div>
+          <AnimatePresence>
+            {shouldTruncate && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="mt-2"
+              >
+                <Button
+                  variant="light"
+                  size="sm"
+                  onClick={toggleExpand}
+                  className="flex items-center text-blue-500 hover:text-blue-600 transition-colors"
+                  aria-expanded={isExpanded}
+                  aria-controls={`post-content-${id}`}
+                >
+                  {isExpanded ? (
+                    <>
+                      <LuChevronUp className="mr-1 h-4 w-4" />
+                      Ver menos
+                    </>
+                  ) : (
+                    <>
+                      <LuChevronDown className="mr-1 h-4 w-4" />
+                      Ver más
+                    </>
+                  )}
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </CardBody>
         <CardFooter>
           <div className={"w-full flex flex-row justify-between"}>

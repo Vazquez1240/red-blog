@@ -30,7 +30,6 @@ class ProfilesViewset(viewsets.ModelViewSet):
             cached_data = cache.get('profiles')
             if cached_data:
                 return Response(cached_data)
-            print('no entre a cache')
             profile = Profile.objects.filter(user=self.request.user).first()
             posts = Post.objects.filter(author_uuid=profile.user.uuid)
             serializer = PostSerializer(posts, many=True)

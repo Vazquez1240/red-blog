@@ -36,7 +36,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
         user = User.objects.get(uuid=request.data['author_uuid'])
         data = request.data
-        print(user.username, 'user.username')
+
 
         data['author_username'] = user.username
         data['author_email'] = user.email
