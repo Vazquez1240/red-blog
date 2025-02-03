@@ -30,7 +30,7 @@ export default function ComponentFeed() {
         );
 
         if (response.status === 200) {
-          console.log(response.data.results, 'data')
+          console.log(response.data.results, "data");
           setPosts(response.data.results);
         }
       } catch (error) {
@@ -38,7 +38,7 @@ export default function ComponentFeed() {
       } finally {
         setTimeout(() => {
           setIsLoading(false);
-        }, 500)
+        }, 500);
       }
     };
 
@@ -51,28 +51,26 @@ export default function ComponentFeed() {
         <ComponentPublicacion setNewPosts={setNewPosts} />
       </section>
       <section className="flex flex-col gap-8">
-        {isLoading
-          ?
-            Array.from({ length: 5 }).map((_, index) => (
-              <PostCardSkeleton key={index} />
-            ))
-          : posts.length === 0 && newPosts.length === 0 ? (
-            <>
-              <ComponentNotPost/>
-            </>
-          ) : (
-            [...newPosts, ...posts].map((post) => (
-              <motion.div
-                key={post.id}
-                animate={{ opacity: 1, y: 0 }}
-                initial={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.5 }}
-              >
-                <ComponentPosts {...post} />
-              </motion.div>
-            ))
-          )
-        }
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, index) => (
+            <PostCardSkeleton key={index} />
+          ))
+        ) : posts.length === 0 && newPosts.length === 0 ? (
+          <>
+            <ComponentNotPost />
+          </>
+        ) : (
+          [...newPosts, ...posts].map((post) => (
+            <motion.div
+              key={post.id}
+              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5 }}
+            >
+              <ComponentPosts {...post} />
+            </motion.div>
+          ))
+        )}
       </section>
     </main>
   );
