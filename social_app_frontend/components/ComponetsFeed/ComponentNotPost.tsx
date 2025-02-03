@@ -1,5 +1,5 @@
-import { Image, Button } from "@heroui/react"
-import { motion } from "framer-motion"
+import { Image } from "@heroui/react";
+import { motion } from "framer-motion";
 
 export default function ComponentNotPost() {
   return (

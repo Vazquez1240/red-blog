@@ -1,9 +1,7 @@
 from rest_framework import viewsets, status
-from yaml import serialize
-
 from social_blog.settings import BASE_URL
 from profiles.models import Profile
-from .models import Post
+from .models import Post, Comment
 from .serializers import PostSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.core.cache import cache
@@ -11,6 +9,7 @@ from users.models import User
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from mongoengine.errors import DoesNotExist
+from datetime import datetime
 
 class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
@@ -34,11 +33,8 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request, *args, **kwargs):
-
-
         user = User.objects.get(uuid=request.data['author_uuid'])
         data = request.data
-
 
         data['author_username'] = user.username
         data['author_email'] = user.email
@@ -91,4 +87,31 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response({
             'likes': len(post.likes),
             'estado': estado
+        }, status=status.HTTP_200_OK)
+
+
+    @action(methods=['patch'], detail=False, url_path='comment-post', url_name='comment-post')
+    def comment_post(self, request):
+        try:
+            post = Post.objects.get(id=self.request.data.get('id_post'))
+        except DoesNotExist:
+            return Response({'detail': 'El post no existe'}, status=status.HTTP_404_NOT_FOUND)
+        comment_content = request.data.get('comment_content')
+        new_comment = Comment(
+            content=comment_content,
+            author_uuid=request.user.uuid,
+            author_username=request.user.username,
+            created_at=datetime.utcnow()
+        )
+        post.comments.append(new_comment) # JAJAJAJAJA por esta mamada me tarde un vergo xD
+        post.save()
+        return Response({
+            'id_post': str(post.id),
+            'comment': {
+                'content': new_comment.content,
+                'author_uuid': str(new_comment.author_uuid),
+                'author_username': new_comment.author_username,
+                'created_at': new_comment.created_at.isoformat()
+            },
+            'total_comments': len(post.comments)
         }, status=status.HTTP_200_OK)

@@ -1,11 +1,17 @@
 import { Card, CardHeader, CardBody, CardFooter, Button } from "@heroui/react";
 import { Avatar } from "@heroui/avatar";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
-import { LuMessageCircle, LuShare2, LuChevronUp, LuChevronDown } from "react-icons/lu";
+import {
+  LuMessageCircle,
+  LuShare2,
+  LuChevronUp,
+  LuChevronDown,
+} from "react-icons/lu";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { useEffect, useRef } from "react";
+import ComponentComment from "@/components/ComponentComment";
 
 import { useAuth } from "@/context/AuthContext";
 import { ResultsPosts } from "@/interface/interfaces";
@@ -22,31 +28,34 @@ export default function ComponentPosts({
   id,
 }: ResultsPosts) {
   const [liked, setLiked] = useState(false);
-  const [ isExpanded, setIsExpanded ] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const { user } = useAuth();
   const [likesCount, setLikesCount] = useState(likes.length);
-  const contentRef = useRef<HTMLParagraphElement>(null)
-  const [shouldTruncate, setShouldTruncate] = useState(false)
-  const toggleExpand = () => setIsExpanded(!isExpanded)
+  const contentRef = useRef<HTMLParagraphElement>(null);
+  const [shouldTruncate, setShouldTruncate] = useState(false);
+  const toggleExpand = () => setIsExpanded(!isExpanded);
+  const [ showComments, setShowComments ] = useState<boolean>(false)
 
   useEffect(() => {
     setLikesCount(likes.length);
-    console.log(user?.user_photo, 'photo')
+    console.log(user?.user_photo, "photo");
     likes.includes(user?.uuid as string) ? setLiked(true) : setLiked(false);
   }, [likes, user]);
 
   useEffect(() => {
     const checkTruncate = () => {
       if (contentRef.current) {
-        const { scrollHeight, clientHeight } = contentRef.current
-        setShouldTruncate(scrollHeight > clientHeight)
-      }
-    }
+        const { scrollHeight, clientHeight } = contentRef.current;
 
-    checkTruncate()
-    window.addEventListener("resize", checkTruncate)
-    return () => window.removeEventListener("resize", checkTruncate)
-  }, [content])
+        setShouldTruncate(scrollHeight > clientHeight);
+      }
+    };
+
+    checkTruncate();
+    window.addEventListener("resize", checkTruncate);
+
+    return () => window.removeEventListener("resize", checkTruncate);
+  }, [content]);
 
   const likePost = async () => {
     const response = await axios.patch(
@@ -95,11 +104,16 @@ export default function ComponentPosts({
         </CardHeader>
         <CardBody>
           <motion.div
-            animate={{ height: isExpanded || !shouldTruncate ? "auto" : "3.4em" }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            animate={{
+              height: isExpanded || !shouldTruncate ? "auto" : "3.4em",
+            }}
             className="relative overflow-hidden"
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <p ref={contentRef} className={`${isExpanded ? "" : "line-clamp-2"}`}>
+            <p
+              ref={contentRef}
+              className={`${isExpanded ? "" : "line-clamp-2"}`}
+            >
               {content}
             </p>
             {shouldTruncate && !isExpanded && (
@@ -109,19 +123,19 @@ export default function ComponentPosts({
           <AnimatePresence>
             {shouldTruncate && (
               <motion.div
-                initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
                 className="mt-2"
+                exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
               >
                 <Button
-                  variant="light"
-                  size="sm"
-                  onClick={toggleExpand}
-                  className="flex items-center text-blue-500 hover:text-blue-600 transition-colors"
-                  aria-expanded={isExpanded}
                   aria-controls={`post-content-${id}`}
+                  aria-expanded={isExpanded}
+                  className="flex items-center text-blue-500 hover:text-blue-600 transition-colors"
+                  size="sm"
+                  variant="light"
+                  onClick={toggleExpand}
                 >
                   {isExpanded ? (
                     <>
@@ -176,7 +190,7 @@ export default function ComponentPosts({
               </Button>
             </div>
             <div>
-              <Button variant={"light"}>
+              <Button variant={"light"} onPress={() => setShowComments(!showComments)}>
                 <LuMessageCircle />
                 {comments.length} Comentarios
               </Button>
@@ -189,6 +203,7 @@ export default function ComponentPosts({
             </div>
           </div>
         </CardFooter>
+        {(showComments && (<ComponentComment comment={comments} />))}
       </Card>
     </>
   );
