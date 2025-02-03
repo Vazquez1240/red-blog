@@ -21,7 +21,8 @@ class PostViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         cached_data = cache.get('posts')
         if cached_data:
-            return cached_data
+            print(cached_data, 'data')
+            return Post.objects.filter(id__in=[post['id'] for post in cached_data])
         queryset = Post.objects.all().order_by('-created_at')
         serialized_data = PostSerializer(queryset, many=True).data
         cache.set('posts', serialized_data)
@@ -34,6 +35,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
 
+
         user = User.objects.get(uuid=request.data['author_uuid'])
         data = request.data
 
@@ -43,6 +45,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
         serializer = PostSerializer(data=data)
         if serializer.is_valid():
+            cache.delete('posts')
             post = serializer.create(data)
             photo_author = Profile.objects.filter(user__uuid=post.author_uuid).first()
             if photo_author.avatar:
@@ -74,7 +77,6 @@ class PostViewSet(viewsets.ModelViewSet):
         estado = None
         if post.likes is None:
             post.likes = []
-
         user_uuid = request.user.uuid
 
         if user_uuid in post.likes:

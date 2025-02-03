@@ -31,6 +31,7 @@ export default function ComponentPosts({
 
   useEffect(() => {
     setLikesCount(likes.length);
+    console.log(user?.user_photo, 'photo')
     likes.includes(user?.uuid as string) ? setLiked(true) : setLiked(false);
   }, [likes, user]);
 

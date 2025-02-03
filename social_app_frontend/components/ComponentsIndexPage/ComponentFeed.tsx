@@ -8,6 +8,7 @@ import ComponentPublicacion from "@/components/ComponetsFeed/ComponentPublicacio
 import { Post, ResultsPosts } from "@/interface/interfaces";
 import ComponentPosts from "@/components/ComponetsFeed/ComponentPosts";
 import PostCardSkeleton from "@/components/ComponetsFeed/PostCardSkeleton";
+import ComponentNotPost from "@/components/ComponetsFeed/ComponentNotPost";
 
 export default function ComponentFeed() {
   const { user } = useAuth();
@@ -25,14 +26,19 @@ export default function ComponentFeed() {
             headers: {
               Authorization: `Bearer ${user?.accessToken}`,
             },
-          }
+          },
         );
 
         if (response.status === 200) {
+          console.log(response.data.results, 'data')
           setPosts(response.data.results);
         }
       } catch (error) {
         await signOut({ redirect: false, callbackUrl: "/" });
+      } finally {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 500)
       }
     };
 
@@ -45,20 +51,28 @@ export default function ComponentFeed() {
         <ComponentPublicacion setNewPosts={setNewPosts} />
       </section>
       <section className="flex flex-col gap-8">
-        {isLoading ? (
-          []
-        ) : (
-          [...newPosts, ...posts].map((post) => (
-            <motion.div
-              key={post.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <ComponentPosts {...post} />
-            </motion.div>
-          ))
-        )}
+        {isLoading
+          ?
+            Array.from({ length: 5 }).map((_, index) => (
+              <PostCardSkeleton key={index} />
+            ))
+          : posts.length === 0 && newPosts.length === 0 ? (
+            <>
+              <ComponentNotPost/>
+            </>
+          ) : (
+            [...newPosts, ...posts].map((post) => (
+              <motion.div
+                key={post.id}
+                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <ComponentPosts {...post} />
+              </motion.div>
+            ))
+          )
+        }
       </section>
     </main>
   );
