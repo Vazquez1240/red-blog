@@ -125,3 +125,14 @@ export interface Posts {
   status: number;
   data: Post[];
 }
+
+/*
+Component Comment
+*/
+
+export interface Comment {
+  content: string;
+  author_uuid: string;
+  author_username: string;
+  created_at: string;
+}
