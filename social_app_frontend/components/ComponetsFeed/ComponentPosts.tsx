@@ -38,7 +38,7 @@ export default function ComponentPosts({
 
   useEffect(() => {
     setLikesCount(likes.length);
-    console.log(user?.user_photo, "photo");
+
     likes.includes(user?.uuid as string) ? setLiked(true) : setLiked(false);
   }, [likes, user]);
 
@@ -203,7 +203,7 @@ export default function ComponentPosts({
             </div>
           </div>
         </CardFooter>
-        {(showComments && (<ComponentComment comment={comments} />))}
+        {(showComments && (<ComponentComment comment={comments} idPost={id} />))}
       </Card>
     </>
   );

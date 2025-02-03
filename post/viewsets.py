@@ -94,6 +94,7 @@ class PostViewSet(viewsets.ModelViewSet):
     def comment_post(self, request):
         try:
             post = Post.objects.get(id=self.request.data.get('id_post'))
+            profile = Profile.objects.get(user__username=request.user.username)
         except DoesNotExist:
             return Response({'detail': 'El post no existe'}, status=status.HTTP_404_NOT_FOUND)
         comment_content = request.data.get('comment_content')
@@ -101,17 +102,20 @@ class PostViewSet(viewsets.ModelViewSet):
             content=comment_content,
             author_uuid=request.user.uuid,
             author_username=request.user.username,
-            created_at=datetime.utcnow()
+            created_at=datetime.utcnow(),
+            author_avatar=BASE_URL+profile.avatar.url,
         )
-        post.comments.append(new_comment) # JAJAJAJAJA por esta mamada me tarde un vergo xD
+        post.comments.append(new_comment)
         post.save()
         return Response({
             'id_post': str(post.id),
             'comment': {
                 'content': new_comment.content,
+                'author_photo': BASE_URL+profile.avatar.url,
                 'author_uuid': str(new_comment.author_uuid),
                 'author_username': new_comment.author_username,
-                'created_at': new_comment.created_at.isoformat()
+                'created_at': new_comment.created_at.isoformat(),
+                'author_avatar': new_comment.author_avatar
             },
             'total_comments': len(post.comments)
-        }, status=status.HTTP_200_OK)
+        }, status=status.HTTP_201_CREATED)

@@ -101,6 +101,7 @@ export interface Comments {
   author_uuid: string;
   author_username: string;
   created_at: string;
+  author_avatar: string;
 }
 
 export interface ResultsPosts {
@@ -112,7 +113,7 @@ export interface ResultsPosts {
   likes: string[];
   comments: Comments[];
   author_photo: string;
-  id:string;
+  id: string;
 }
 export interface Post {
   current_page: number;
@@ -124,15 +125,4 @@ export interface Post {
 export interface Posts {
   status: number;
   data: Post[];
-}
-
-/*
-Component Comment
-*/
-
-export interface Comment {
-  content: string;
-  author_uuid: string;
-  author_username: string;
-  created_at: string;
 }
