@@ -13,12 +13,9 @@ export default function ComponentComments({ showModal }: Props) {
     <>
       <ComponenteModal
         GenericData={{
+          close: closeModal,
           status: true,
           type_modal: "text",
-        }}
-        ModalData={{
-          textBtn: "Cerrar",
-          function_buton: () => closeModal(),
         }}
       >
         <div>hola</div>
