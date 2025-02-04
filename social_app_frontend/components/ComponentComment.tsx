@@ -48,6 +48,9 @@ export default function ComponentComment({ comment, idPost }: Props) {
     }
   };
 
+  const allComments = [...Newcomments, ...comment];
+  const commentsToShow = showVerMas ? allComments : allComments.slice(0, 2);
+
   return (
     <>
       <motion.div
@@ -61,9 +64,9 @@ export default function ComponentComment({ comment, idPost }: Props) {
           <Input
             className="flex-grow bg-t"
             color={"primary"}
+            placeholder="Escribe un comentario..."
             type="text"
             variant={"bordered"}
-            placeholder="Escribe un comentario..."
             onKeyDown={(e) => setCommentContent(e.currentTarget.value)}
           />
           <Button color={"primary"} type="submit">
@@ -96,6 +99,14 @@ export default function ComponentComment({ comment, idPost }: Props) {
                   </div>
                 </motion.div>
               ),
+          )}
+          {allComments.length > 2 && (
+            <Button
+              className={"w-full"}
+              variant={"light"}
+            >
+              Ver más comentarios
+            </Button>
           )}
         </div>
       </motion.div>

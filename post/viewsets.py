@@ -107,11 +107,16 @@ class PostViewSet(viewsets.ModelViewSet):
         )
         post.comments.append(new_comment)
         post.save()
+        if profile.avatar:
+            photo_url = BASE_URL+profile.avatar.url
+        else:
+            photo_url = None
+
         return Response({
             'id_post': str(post.id),
             'comment': {
                 'content': new_comment.content,
-                'author_photo': BASE_URL+profile.avatar.url,
+                'author_photo': photo_url,
                 'author_uuid': str(new_comment.author_uuid),
                 'author_username': new_comment.author_username,
                 'created_at': new_comment.created_at.isoformat(),
