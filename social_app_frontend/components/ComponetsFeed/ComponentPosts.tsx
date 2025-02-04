@@ -198,7 +198,7 @@ export default function ComponentPosts({
             <div>
               <Button variant={"light"}>
                 <LuShare2 />
-                {comments.length} Compartir
+                0 Compartir
               </Button>
             </div>
           </div>

@@ -29,6 +29,7 @@
   "@types/next-auth": "^3.13.0",
   "axios": "^1.7.9",
   "clsx": "2.1.1",
+  "date-fns": "^4.1.0",
   "dexie-react-hooks": "^1.1.7",
   "framer-motion": "^11.13.1",
   "intl-messageformat": "^10.5.0",

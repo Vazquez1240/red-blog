@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { Input, Button, Avatar } from "@heroui/react";
 import { useState } from "react";
 import axios from "axios";
+import { formatDistanceToNow, parseISO } from "date-fns";
+import { es } from "date-fns/locale";
 
 import { useAuth } from "@/context/AuthContext";
 import { Comments } from "@/interface/interfaces";
@@ -14,6 +16,7 @@ interface Props {
 export default function ComponentComment({ comment, idPost }: Props) {
   const [Newcomments, setNewComments] = useState<Comments[]>([]);
   const [commentContent, setCommentContent] = useState("");
+  const [showVerMas, setShowVerMas] = useState(false);
   const { user } = useAuth();
 
   const submitForm = async (e: React.FormEvent) => {
@@ -34,7 +37,10 @@ export default function ComponentComment({ comment, idPost }: Props) {
       );
 
       if (response.status === 201) {
-        setNewComments((prevComments: any) => [response.data?.comment, ...prevComments]);
+        setNewComments((prevComments: any) => [
+          response.data?.comment,
+          ...prevComments,
+        ]);
         setCommentContent("");
       }
     } catch (error) {
@@ -58,7 +64,6 @@ export default function ComponentComment({ comment, idPost }: Props) {
             type="text"
             variant={"bordered"}
             placeholder="Escribe un comentario..."
-            // value={newComment}
             onKeyDown={(e) => setCommentContent(e.currentTarget.value)}
           />
           <Button color={"primary"} type="submit">
@@ -66,24 +71,32 @@ export default function ComponentComment({ comment, idPost }: Props) {
           </Button>
         </form>
         <div className="space-y-4">
-          {[...Newcomments, ...comment].map((comment, index) => (
-            <motion.div
-              key={index}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex space-x-2"
-              initial={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Avatar className="w-8 h-8" src={comment.author_avatar} />
-              <div className="flex-grow">
-                <div className="flex items-center space-x-2">
-                  <p className="font-semibold">{comment.author_username}</p>
-                  <p className="text-xs text-gray-500">{comment.created_at}</p>
-                </div>
-                <p>{comment.content}</p>
-              </div>
-            </motion.div>
-          ))}
+          {[...Newcomments, ...comment].map(
+            (comment, index) =>
+              index < 2 && (
+                <motion.div
+                  key={index}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex space-x-2"
+                  initial={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Avatar className="w-8 h-8" src={comment.author_avatar} />
+                  <div className="flex-grow">
+                    <div className="flex items-center space-x-2">
+                      <p className="font-semibold">{comment.author_username}</p>
+                      <p className="text-xs text-gray-500">
+                        {formatDistanceToNow(parseISO(comment.created_at), {
+                          addSuffix: true,
+                          locale: es,
+                        })}
+                      </p>
+                    </div>
+                    <p>{comment.content}</p>
+                  </div>
+                </motion.div>
+              ),
+          )}
         </div>
       </motion.div>
     </>
