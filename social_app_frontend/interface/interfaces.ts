@@ -22,16 +22,16 @@ export interface FormDataRegister {
 }
 
 export interface GenericDataBase {
-  status: boolean;
-  isSuccesOrFail: boolean;
-  modal_verify: boolean;
+  status?: boolean;
+  isSuccesOrFail?: boolean;
+  modal_verify?: boolean;
   isDismissable?: false;
   backdrop?: "blur";
-  close: (value: boolean) => void;
+  close?: (value: boolean) => void;
 }
 export interface GenericDataInput extends GenericDataBase {
   type_modal: "input";
-  inputData: string;
+  inputData?: string;
   setInputValue: (value: string) => void;
 }
 
@@ -45,7 +45,7 @@ export interface ModalData {
   message?: string;
   textBtn?: string;
   colorIcon?: string;
-  function_buton: () => void;
+  function_buton?: () => void;
 }
 
 export interface ModalSuccess {

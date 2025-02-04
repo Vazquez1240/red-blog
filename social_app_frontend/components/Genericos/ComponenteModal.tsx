@@ -11,7 +11,6 @@ import {
 import { Input } from "@heroui/input";
 import { useTheme } from "next-themes";
 import { ReactNode } from "react";
-import { LuHospital } from "react-icons/lu";
 
 import {
   GenericData,
@@ -37,12 +36,7 @@ export default function ComponenteModal({
     type_modal: "text",
     close: () => {},
   },
-  ModalData = {
-    titulo: "Título por defecto",
-    message: "Mensaje por defecto",
-    textBtn: "Aceptar",
-    function_buton: () => {},
-  },
+  ModalData,
   ModalSuccess,
   ModalFail,
   children,
@@ -65,7 +59,9 @@ export default function ComponenteModal({
   };
 
   const handleButtonClick = () => {
-    ModalData.function_buton();
+    if(ModalData?.function_buton){
+      ModalData.function_buton();
+    }
     setIsCompleted(true);
   };
 
@@ -103,7 +99,7 @@ export default function ComponenteModal({
             exit: "exit",
           }}
           onOpenChange={(isOpen) => {
-            if (!isOpen) GenericData.close(false);
+            if (!isOpen && GenericData?.close) GenericData.close(false);
           }}
         >
           <ModalContent>
@@ -122,13 +118,17 @@ export default function ComponenteModal({
                         exit={{ scale: 0.9, opacity: 0 }}
                         initial={{ scale: 0.9, opacity: 0 }}
                       >
-                        <h2 className="text-2xl font-bold mb-4">
-                          {ModalData.titulo}
-                        </h2>
+                        {ModalData?.titulo && (
+                          <h2 className="text-2xl font-bold mb-4">
+                            {ModalData.titulo}
+                          </h2>
+                        )}
                         <div className="flex flex-col gap-3">
-                          <label htmlFor={"username"}>
-                            {ModalData.message}
-                          </label>
+                          {ModalData?.message && (
+                            <label htmlFor={"username"}>
+                              {ModalData.message}
+                            </label>
+                          )}
                           <Input
                             color={"primary"}
                             name={"username"}
@@ -145,7 +145,7 @@ export default function ComponenteModal({
                         initial={{ opacity: 0, y: 20 }}
                         transition={{ delay: 0.3, duration: 0.5 }}
                       >
-                        {GenericData.icon && (
+                        {GenericData.icon && ModalData?.colorIcon && (
                           <GenericData.icon
                             className={`${ModalData.colorIcon}`}
                             fontSize={55}
@@ -164,12 +164,14 @@ export default function ComponenteModal({
                     )}
                   </ModalBody>
                   <ModalFooter>
-                    <Button
-                      color={`${tema === "dark" ? "default" : "primary"}`}
-                      onPress={handleButtonClick}
-                    >
-                      {ModalData.textBtn}
-                    </Button>
+                    {ModalData?.function_buton && (
+                      <Button
+                        color={`${tema === "dark" ? "default" : "primary"}`}
+                        onPress={handleButtonClick}
+                      >
+                        {ModalData.textBtn}
+                      </Button>
+                    )}
                   </ModalFooter>
                 </>
               ) : GenericData.isSuccesOrFail ? (
