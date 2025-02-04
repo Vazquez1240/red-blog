@@ -36,14 +36,14 @@ export interface GenericDataInput extends GenericDataBase {
 }
 
 export interface GenericDataText extends GenericDataBase {
-  icon: typeof FaHospitalUser;
+  icon?: typeof FaHospitalUser;
   type_modal: "text";
 }
 
 export interface ModalData {
-  titulo: string;
-  message: string;
-  textBtn: string;
+  titulo?: string;
+  message?: string;
+  textBtn?: string;
   colorIcon?: string;
   function_buton: () => void;
 }

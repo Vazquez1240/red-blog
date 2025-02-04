@@ -4,6 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
+import ComponentComments from "@/components/ComponentComments/ComponentComments";
 
 import { useAuth } from "@/context/AuthContext";
 import { Comments } from "@/interface/interfaces";
@@ -101,13 +102,11 @@ export default function ComponentComment({ comment, idPost }: Props) {
               ),
           )}
           {allComments.length > 2 && (
-            <Button
-              className={"w-full"}
-              variant={"light"}
-            >
+            <Button className={"w-full"} variant={"light"}>
               Ver más comentarios
             </Button>
           )}
+          <ComponentComments showModal={showVerMas}/>
         </div>
       </motion.div>
     </>

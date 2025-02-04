@@ -10,6 +10,8 @@ import {
 } from "@heroui/react";
 import { Input } from "@heroui/input";
 import { useTheme } from "next-themes";
+import { ReactNode } from "react";
+import { LuHospital } from "react-icons/lu";
 
 import {
   GenericData,
@@ -19,17 +21,31 @@ import {
 } from "@/interface/interfaces";
 
 interface Props {
-  GenericData: GenericData;
-  ModalData: ModalData;
+  GenericData?: GenericData;
+  ModalData?: ModalData;
   ModalSuccess?: ModalSuccess;
   ModalFail?: ModalFail;
+  children?: ReactNode;
 }
 
 export default function ComponenteModal({
-  GenericData,
-  ModalData,
+  GenericData = {
+    status: true,
+    modal_verify: false,
+    isSuccesOrFail: false,
+    isDismissable: false,
+    type_modal: "text",
+    close: () => {},
+  },
+  ModalData = {
+    titulo: "Título por defecto",
+    message: "Mensaje por defecto",
+    textBtn: "Aceptar",
+    function_buton: () => {},
+  },
   ModalSuccess,
   ModalFail,
+  children,
 }: Props) {
   const { onOpenChange } = useDisclosure();
   const [isCompleted, setIsCompleted] = useState(false);
@@ -129,9 +145,12 @@ export default function ComponenteModal({
                         initial={{ opacity: 0, y: 20 }}
                         transition={{ delay: 0.3, duration: 0.5 }}
                       >
-                        <GenericData.icon
-                          className={`${ModalData.colorIcon}`}
-                          fontSize={55}/>
+                        {GenericData.icon && (
+                          <GenericData.icon
+                            className={`${ModalData.colorIcon}`}
+                            fontSize={55}
+                          />
+                        )}
                         <h2 className="text-2xl font-bold mb-2">
                           {ModalData?.titulo}
                         </h2>
@@ -140,6 +159,7 @@ export default function ComponenteModal({
                         >
                           {ModalData?.message}
                         </p>
+                        {children}
                       </motion.div>
                     )}
                   </ModalBody>
@@ -170,14 +190,12 @@ export default function ComponenteModal({
                       delay: 0.2,
                     }}
                   >
-                    {
-                      ModalSuccess !== undefined && (
-                        <ModalSuccess.icon
-                          className="text-green-500"
-                          fontSize={55}
-                        />
-                      )
-                    }
+                    {ModalSuccess !== undefined && (
+                      <ModalSuccess.icon
+                        className="text-green-500"
+                        fontSize={55}
+                      />
+                    )}
                   </motion.div>
                   <motion.div
                     animate={{ opacity: 1, y: 0 }}
@@ -214,11 +232,9 @@ export default function ComponenteModal({
                     }}
                     className={"w-full flex justify-center items-center"}
                   >
-                    {
-                      ModalFail !== undefined && (
-                        <ModalFail.icon className="text-red-500" fontSize={55} />
-                      )
-                    }
+                    {ModalFail !== undefined && (
+                      <ModalFail.icon className="text-red-500" fontSize={55} />
+                    )}
                   </motion.div>
                   <motion.div
                     animate={{ opacity: 1, y: 0 }}
