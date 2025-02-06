@@ -203,7 +203,7 @@ export default function ComponentPosts({
             </div>
           </div>
         </CardFooter>
-        {(showComments && (<ComponentComment comment={comments} idPost={id} />))}
+        {(showComments && (<ComponentComment comment={comments} idPost={id} publicacion={content} />))}
       </Card>
     </>
   );

@@ -10,7 +10,7 @@ export default function ComponentComments({ showModal }: Props) {
   };
 
   return (
-    <>
+    <div>
       <ComponenteModal
         GenericData={{
           close: closeModal,
@@ -20,6 +20,6 @@ export default function ComponentComments({ showModal }: Props) {
       >
         <div>hola</div>
       </ComponenteModal>
-    </>
+    </div>
   );
 }

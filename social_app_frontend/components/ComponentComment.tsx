@@ -12,9 +12,10 @@ import { Comments } from "@/interface/interfaces";
 interface Props {
   comment: Comments[];
   idPost: string;
+  publicacion: string;
 }
 
-export default function ComponentComment({ comment, idPost }: Props) {
+export default function ComponentComment({ comment, idPost, publicacion }: Props) {
   const [Newcomments, setNewComments] = useState<Comments[]>([]);
   const [commentContent, setCommentContent] = useState("");
   const [showVerMas, setShowVerMas] = useState(false);
@@ -74,7 +75,7 @@ export default function ComponentComment({ comment, idPost }: Props) {
             Comentar
           </Button>
         </form>
-        <div className="space-y-4">
+        <div className="space-y-4 ">
           {[...Newcomments, ...comment].map(
             (comment, index) =>
               index < 2 && (
