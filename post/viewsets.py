@@ -92,18 +92,21 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(methods=['patch'], detail=False, url_path='comment-post', url_name='comment-post')
     def comment_post(self, request):
+        print('pasando aqui')
         try:
             post = Post.objects.get(id=self.request.data.get('id_post'))
+            print('pasando aqui x2')
             profile = Profile.objects.get(user__username=request.user.username)
+            print('pasando aqui x3 ')
         except DoesNotExist:
             return Response({'detail': 'El post no existe'}, status=status.HTTP_404_NOT_FOUND)
         comment_content = request.data.get('comment_content')
+
         new_comment = Comment(
             content=comment_content,
             author_uuid=request.user.uuid,
             author_username=request.user.username,
-            created_at=datetime.utcnow(),
-            author_avatar=BASE_URL+profile.avatar.url,
+            created_at=datetime.utcnow()
         )
         post.comments.append(new_comment)
         post.save()
@@ -112,15 +115,16 @@ class PostViewSet(viewsets.ModelViewSet):
         else:
             photo_url = None
 
+
+
         return Response({
             'id_post': str(post.id),
             'comment': {
                 'content': new_comment.content,
-                'author_photo': photo_url,
                 'author_uuid': str(new_comment.author_uuid),
                 'author_username': new_comment.author_username,
                 'created_at': new_comment.created_at.isoformat(),
-                'author_avatar': new_comment.author_avatar
+                'author_avatar': photo_url
             },
             'total_comments': len(post.comments)
         }, status=status.HTTP_201_CREATED)

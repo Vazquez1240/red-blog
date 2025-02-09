@@ -4,7 +4,6 @@ from datetime import datetime
 import uuid
 
 class Comment(EmbeddedDocument):
-    author_avatar = StringField()
     content = StringField(max_length=450, required=True)
     author_uuid = UUIDField(required=True)
     author_username = StringField(max_length=150)

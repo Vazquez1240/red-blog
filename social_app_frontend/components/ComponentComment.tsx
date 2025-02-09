@@ -111,7 +111,7 @@ export default function ComponentComment({ comment, idPost, publicacion }: Props
               Ver más comentarios
             </Button>
           )}
-          {showVerMas && <ComponentComments showModal={setShowVerMas} />}
+          {showVerMas && <ComponentComments comments={comment} showModal={setShowVerMas}/>}
         </div>
       </motion.div>
     </>
