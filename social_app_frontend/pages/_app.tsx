@@ -4,7 +4,7 @@ import { HeroUIProvider } from "@heroui/system";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { useRouter } from "next/router";
 import { AuthProvider } from "@/context/AuthContext";
-import { SessionProvider } from "next-auth/react"
+import { SessionProvider } from "next-auth/react";
 
 import { fontSans, fontMono } from "@/config/fonts";
 import "@/styles/globals.css";
