@@ -67,6 +67,7 @@ class ProfileViewset(viewsets.ModelViewSet):
             return Response([])
 
 
+
 class FollowViewset(viewsets.ModelViewSet):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
